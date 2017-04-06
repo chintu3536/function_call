@@ -816,7 +816,20 @@ Code_For_Ast & Return_Ast::compile()
 	//TODO:
 }
 
-//////////////////////////////////////////////////////////////////////////////
+Code_For_Ast & Print_Ast::compile()
+{
+
+}
+
+Code_For_Ast & String_Ast::compile()
+{
+
+}
+
+Code_For_Ast & Func_Call_Ast::compile()
+{
+	
+}
 
 Code_For_Ast & Sequence_Ast::compile()
 {	
@@ -933,32 +946,11 @@ void Sequence_Ast::optimise_icode(){
 		}
 	}
 
-
-	//************************************************************************
-
-	//cout<<"\033[1;33m-------------------\033[0m"<<endl;
-
-	//************************************************************************
-
 	bool dead_found=true;
 	int count = 0;
 	while(dead_found){
-		//cout<<"Iteration Count : "<<count<<endl;
-
-		// for (IC_Block * icb = start_block; icb != NULL; icb = icb->get_sequ()){
-		// 	//cout<<"\033[1;31mBlock : "<<icb->get_block_no()<<"\033[0m"<<endl;
-		// 	list<Icode_Stmt *> l = icb->get_ics_list();
-		// 	for (ic_list_it it = l.begin(); it != l.end(); it++)
-		// 	{
-		// 		// (*it)->print_icode(std::cout);
-		// 	}
-		// }
-
 		for (IC_Block * icb = start_block; icb != NULL; icb = icb->get_sequ()){
-			//cout<<"\033[1;35mBlock : "<<icb->get_block_no()<<"\033[0m"<<endl;
 			icb->populate_gen_kill();
-			// icb->print_gen();
-			// icb->print_kill();
 		}
 
 		for( IC_Block * icb = start_block; icb != NULL; icb = icb->get_sequ())
@@ -977,40 +969,14 @@ void Sequence_Ast::optimise_icode(){
 			}
 		}
 
-		for (IC_Block * icb = start_block; icb != NULL; icb = icb->get_sequ()){
-			//cout<<"\033[1;36mBlock : "<<icb->get_block_no()<<"\033[0m"<<endl;
-			// icb->print_in();
-			// icb->print_out();
-		}
 		dead_found=false;
 		for (IC_Block * icb = start_block; icb != NULL; icb = icb->get_sequ()){
-			//cout<<"\033[1;33mBlock : "<<icb->get_block_no()<<"\033[0m"<<endl;
 			set<var> dead_var;
 			dead_var=set_diff(icb->get_kill(), icb->get_out());
 			list<Icode_Stmt *> block_ics_list = icb->get_ics_list();
-			// //cout<<"size : "<<block_ics_list.size();
 			for(list<Icode_Stmt *> ::iterator it=block_ics_list.begin();it!=(block_ics_list).end();it++){
-			// //cout<<"yyyynfiniter\n";
-
-				// var v=(*it)->get_names_left();
-				// // //cout<<v.name<<endl;
-				// for(set<var> ::iterator dead_it=dead_var.begin(); dead_it!=dead_var.end();dead_it++){
-				// 	if((*dead_it)==v){
-				// 		(*it)->print_icode(//cout);
-				// 		// //cout<<(*dead_it).name<<" dead "<<v.name<<endl;
-				// 		(block_ics_list).erase(it);
-				// 		icb->set_ics_list(block_ics_list);
-				// 		dead_found=true;
-				// 		break;
-				// 	}
-				// 	// else
-				// 	// //cout<<"Not Dead\n";
-				// }
-
 
 				var v = (*it)->get_names_left();
-				//cout<<"Paina : ";
-				// (*it)->print_icode(std::cout);
 				if (dead_var.find(v) != dead_var.end())
 				{
 					list<Icode_Stmt*>::iterator it1 = ++it; it--;
@@ -1025,19 +991,12 @@ void Sequence_Ast::optimise_icode(){
 						for (int i = 0; i < r.size(); i++){
 							if (r[i] == v){
 								found_eq = true;
-								//cout<<"Right found\n";
-								// (*it)->print_icode(std::cout);
-								// (*it1)->print_icode(std::cout);
 								break;
 							}
 						}
 						if(!found_eq){
-							//cout<<"Not found, check left\n";
 							if(vl == v){
-								found_eq = false;	
-								//cout<<"left found\n";
-								// (*it)->print_icode(std::cout);
-								// (*it1)->print_icode(std::cout);
+								found_eq = false;
 								break;
 							}
 						}
@@ -1064,19 +1023,12 @@ void Sequence_Ast::optimise_icode(){
 						for (int i = 0; i < r.size(); i++){
 							if (r[i] == v){
 								found_eq = true;
-								// cout<<"Right found\n";
-								// (*it)->print_icode(std::cout);
-								// (*it1)->print_icode(std::cout);
 								break;
 							}
 						}
 						if(!found_eq){
-							//cout<<"Not found, check left\n";
 							if(vl == v && v.name!="#"){
-								found_eq = false;	
-								//cout<<"left found\n";
-								// (*it)->print_icode(std::cout);
-								// (*it1)->print_icode(std::cout);
+								found_eq = false;
 
 								(block_ics_list).erase(it);
 								icb->set_ics_list(block_ics_list);

@@ -1,0 +1,122 @@
+  Procedure: main
+  Intermediate Code Statements
+	iLoad:    	v0 <- 1
+	store:    	fact <- v0
+	iLoad:    	v0 <- 5
+	store:    	number <- v0
+	addi:    	sp <- sp , -4
+	store:    	sp <- v0
+	addi:    	sp <- sp , -4
+	store:    	sp <- a0
+	addi:    	sp <- sp , -8
+	store.d:    	sp <- f12
+	loadAdd:    	a0 <- string0
+	iLoad:    	v0 <- 4
+	syscall 
+	load.d:    	f12 <- sp
+	addi:    	sp <- sp , 8
+	load:    	a0 <- sp
+	addi:    	sp <- sp , 4
+	load:    	v0 <- sp
+	addi:    	sp <- sp , 4
+	load:    	v0 <- fact
+	addi:    	sp <- sp , -4
+	store:    	sp <- v0
+	addi:    	sp <- sp , -4
+	store:    	sp <- a0
+	addi:    	sp <- sp , -8
+	store.d:    	sp <- f12
+	move:    	a0 <- v0
+	iLoad:    	v0 <- 1
+	syscall 
+	load.d:    	f12 <- sp
+	addi:    	sp <- sp , 8
+	load:    	a0 <- sp
+	addi:    	sp <- sp , 4
+	load:    	v0 <- sp
+	addi:    	sp <- sp , 4
+	load:    	v0 <- number
+	store:    	n <- v0
+	call nonrecurfn
+	load:    	v0 <- number
+	store:    	number <- v0
+	call recurfn
+	return
+  Procedure: nonrecurfactorial
+  Intermediate Code Statements
+	iLoad:    	v0 <- 1
+	store:    	result <- v0
+	iLoad:    	v0 <- 1
+	store:    	c <- v0
+	goto label1
+
+label0:    	
+	load:    	v0 <- result
+	load:    	t0 <- c
+	mul:    	t2 <- v0 , t0
+	store:    	result <- t2
+	load:    	v0 <- c
+	iLoad:    	t0 <- 1
+	add:    	t2 <- v0 , t0
+	store:    	c <- t2
+
+label1:    	
+	load:    	v0 <- c
+	load:    	t0 <- n
+	sle:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label0
+	load:    	v0 <- result
+	move:    	v1 <- v0
+	return
+  Procedure: nonrecurfn
+  Intermediate Code Statements
+	load:    	v0 <- n
+	iLoad:    	t0 <- 0
+	slt:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label2
+	goto label3
+
+label2:    	
+	load:    	v0 <- n
+	store:    	n <- v0
+	call nonrecurfactorial
+	move:    	v0 <- v1
+	store:    	f <- v0
+
+label3:    	
+	return
+  Procedure: recurfactorial
+  Intermediate Code Statements
+	load:    	v0 <- n
+	iLoad:    	t0 <- 0
+	seq:    	t1 <- v0 , t0
+	beq:    	t1 , zero : goto label4
+	iLoad:    	v0 <- 1
+	store:    	result <- v0
+	goto label5
+
+label4:    	
+	load:    	v0 <- n
+	iLoad:    	t0 <- 1
+	sub:    	t2 <- v0 , t0
+	store:    	n <- t2
+	call recurfactorial
+	move:    	v0 <- v1
+	store:    	result <- v0
+	load:    	v0 <- n
+	load:    	t0 <- result
+	mul:    	t1 <- v0 , t0
+	store:    	result <- t1
+
+label5:    	
+	load:    	v0 <- result
+	move:    	v1 <- v0
+	return
+  Procedure: recurfn
+  Intermediate Code Statements
+	load:    	v0 <- number
+	store:    	n <- v0
+	call recurfactorial
+	move:    	v0 <- v1
+	store:    	fact <- v0
+	return

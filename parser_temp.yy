@@ -135,7 +135,19 @@ return_stmt:
 ;
 
 function_call:
-    NAME '(' argument_list ')' ';'
+    NAME '(' parameter_list ')' ';'
+;
+
+parameter_list:
+
+|
+    parameter
+|
+    parameter_list ',' parameter
+;
+
+parameter:
+    arith_expression
 ;
 
 arith_expression:

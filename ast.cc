@@ -629,6 +629,102 @@ Data_Type Return_Ast::get_data_type()
 	return node_data_type;
 }
 
+Print_Ast::Print_Ast(Ast * temp_ast, int line)
+{
+	p_ast = temp_ast;
+	lineno = line;
+	check_ast();
+	ast_num_child = unary_arity;
+	set_data_type(p_ast->get_data_type());
+}
+
+Print_Ast::~Print_Ast()
+{
+	delete p_ast;
+}
+
+Print_Ast::check_ast()
+{
+	return (p_ast != NULL);
+}
+
+Data_Type Print_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+void Print_Ast::set_data_type(Data_Type dt)
+{
+	node_data_type = dt;
+}
+
+void Print_Ast::print(ostream & file_buffer)
+{
+	
+}
+
+String_Ast::String_Ast(string s, int line)
+{
+	str = s;
+	lineno = line;
+	ast_num_child = unary_arity;
+	set_data_type(void_data_type);
+}
+
+void String_Ast::set_data_type(Data_Type dt)
+{
+	node_data_type = dt;
+}
+
+Data_Type String_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+string String_Ast::get_string()
+{
+	return str;
+}
+
+void String_Ast::print(ostream & file_buffer)
+{
+
+}
+
+Func_Call_Ast::Func_Call_Ast(string f, list<Ast *> arglist, int line)
+{
+	fname = f;
+	lineno = line;
+	paramlist = arglist;
+	// TODO : Name_Ast
+	Data_Type fname_type = program_object.get_return_type(fname);
+	set_data_type(fname_type);
+}
+
+Func_Call_Ast::~Func_Call_Ast()
+{
+	for (auto&& element : paramlist)
+	{
+  		delete element;
+	}
+	paramlist.clear();
+}
+
+void Func_Call_Ast::set_data_type(Data_Type dt)
+{
+	node_data_type = dt;
+}
+
+Data_Type Func_Call_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+void Func_Call_Ast::print(ostream & file_buffer)
+{
+	
+}
+
 Sequence_Ast::Sequence_Ast(int line)
 {
 	lineno = line;

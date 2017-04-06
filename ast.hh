@@ -273,6 +273,40 @@ public:
 	Code_For_Ast & compile();
 };
 
+class Print_Ast:public Ast
+{
+	Ast * p_ast;
+
+public:
+	Print_Ast(Ast * param_ast, int line);
+	~Print_Ast();
+
+	Data_Type get_data_type();
+	void set_data_type(Data_Type dt);
+	bool check_ast();
+
+	void print(ostream & file_buffer);
+
+	Code_For_Ast & compile();
+}
+
+class String_Ast:public Ast
+{
+	string str;
+
+public:
+	String_Ast(string s, int line);
+	~String_Ast(){}
+
+	Data_Type get_data_type();
+	void set_data_type(Data_Type dt);
+	string get_string();
+
+	void print(ostream & file_buffer);
+
+	Code_For_Ast & compile();
+}
+
 class Return_Ast: public Ast
 {
 	Ast *ret;
@@ -286,6 +320,21 @@ public:
 
 	Code_For_Ast & compile();
 };
+
+class Func_Call_Ast: public Ast
+{
+	string fname;
+	list<Ast *> paramlist;
+public:
+	Func_Call_Ast(string f, list<Ast *> arglist, int line);
+	~Func_Call_Ast();
+
+	void set_data_type(Data_Type dt);
+	Data_Type get_data_type();
+	void print(ostream & file_buffer);
+
+	Code_For_Ast & compile();
+}
 
 class Sequence_Ast: public Ast{
 	list<Ast *> statement_list;

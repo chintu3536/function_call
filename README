@@ -10,3 +10,4 @@ program.hh:
 	bool variable_in_proc_map_check(string symbol); -> checks for procedure name in existing group of procedures
 
 test
+test1

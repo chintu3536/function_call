@@ -51,6 +51,11 @@ Data_Type Program::get_return_type(string function_name)
 	return (procedure_map[function_name])->get_return_type();
 }
 
+Procedure * get_procedure(string name)
+{
+	return procedure_map[name];
+}
+
 void Program::print_sym()
 {
 	//TODO:

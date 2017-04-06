@@ -11,6 +11,8 @@
 
 using namespace std;
 
+typedef list<pair<Data_Type, string> > ARG_L;
+
 class Procedure;
 
 class Procedure
@@ -19,7 +21,7 @@ class Procedure
 	string name;
 	Symbol_Table local_symbol_table;
 	Sequence_Ast * sequence_ast;
-
+	ARG_L argument_list;
 	int lineno;
 
 public:
@@ -31,6 +33,8 @@ public:
 	void set_local_list(Symbol_Table & new_list);
 	Data_Type get_return_type();
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+	void set_argument_list(ARG_L argument_list);
+	bool same_arguments(ARG_L def_arg_list);
 
 	void print(ostream & file_buffer);
 	void print_sym(ostream & file_buffer);

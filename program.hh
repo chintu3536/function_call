@@ -31,6 +31,7 @@ public:
 
 	Symbol_Table_Entry & get_symbol_table_entry(string variable);
 	Data_Type get_return_type(string function_name);
+	Procedure * get_procedure(string name);
 
 	void print_sym();
 	void print();

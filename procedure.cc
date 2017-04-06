@@ -42,6 +42,7 @@ void Procedure::set_local_list(Symbol_Table & new_list)
 	local_symbol_table = new_list;
 }
 
+
 Data_Type Procedure::get_return_type()
 {
 	return return_type;
@@ -50,6 +51,28 @@ Data_Type Procedure::get_return_type()
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 {
 	return local_symbol_table.get_symbol_table_entry(variable_name);
+}
+
+void Procedure::set_argument_list(ARG_L arg_list)
+{
+	argument_list = arg_list;
+}
+
+bool Procedure::same_arguments(ARG_L def_arg_list)
+{
+	if(def_arg_list.size()!=argument_list.size())
+	{
+		return false;
+	}
+	ARG_L::iterator it1, it2;
+	for(it1=argument_list.begin(), it2=def_arg_list.begin(); it1!=argument_list;it1++, it2++)
+	{
+		if(*(it1) != *(it2))
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 bool Procedure::variable_in_symbol_list_check(string variable)

@@ -14,6 +14,12 @@
     Symbol_Table * symbol_table;
     Sequence_Ast *sequence_Ast;
     Ast * ast;
+    Procedure *proc;
+    list<pair<Data_Type, string> > *arg_list;
+    pair<Data_Type, string> *arg;
+    Return_Ast *ret_ast;
+    Print_Ast *p_ast;
+    Func_Call_Ast *f_ast;
 };
 
 %left OR
@@ -54,6 +60,15 @@
 %type <ast> variable
 %type <ast> constant
 
+%type <> procedure_definition_list
+%type <proc> procedure_declaration
+%type <string_value> func_type
+%type <arg_list> argument_list
+%type <arg> argument
+%type <> procedure_definition
+%type <f_ast> function_call
+%type <p_ast> print_statement
+%type <ret_ast> return_stmt
 
 %start program
 
@@ -122,7 +137,7 @@ procedure_declaration_list:
 ;
 
 procedure_declaration:
-    type NAME '(' argument_list ')' ';'
+    func_type NAME '(' argument_list ')' ';'
     {
     if (NOT_ONLY_PARSE)
     {
@@ -176,7 +191,7 @@ procedure_declaration:
     }
 ;
 
-type:
+func_type:
     VOID
     {
     if (NOT_ONLY_PARSE)
@@ -191,7 +206,7 @@ type:
     {
         $$ = "int";
     }
-    }
+}
 |
     FLOAT
     {
@@ -588,6 +603,26 @@ matched_stmt:
 		$$ = statement_list;
 	}	
 	}
+|
+    return_stmt
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($1!=NULL, "Return statement cannot be null", get_line_number());
+        Ast *ret_stmt = $1;
+        $$ = ret_stmt;
+    }
+    }
+|
+    function_call
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($1!=NULL, "Function call cannot be null", get_line_number());
+        Ast *func_ast = $1;
+        $$ = func_ast;
+    }
+    }
 ;   
 
 unmatched_stmt:

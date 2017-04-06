@@ -75,6 +75,30 @@ bool Procedure::same_arguments(ARG_L def_arg_list)
 	return true;
 }
 
+bool Procedure::argument_type_check(list<Data_Type> type_list)
+{
+	if(argument_list.size()!=type_list.size())
+	{
+		return false;
+	}
+	ARG_L::iterator it1;
+	list<Data_Type>:: iterator it2;
+
+	for(it1=argument_list.begin(), it2=type_list.begin(); it1!=argument_list.end(); it1++, it2++)
+	{
+		if(it1->first != *it2)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+void Procedure::add_symbol_entry(Symbol_Table_Entry &ste)
+{
+	local_symbol_table.push_symbol(&ste);
+}
+
 bool Procedure::variable_in_symbol_list_check(string variable)
 {
 	return local_symbol_table.variable_in_symbol_list_check(variable);

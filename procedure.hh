@@ -35,6 +35,8 @@ public:
 	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
 	void set_argument_list(ARG_L argument_list);
 	bool same_arguments(ARG_L def_arg_list);
+	bool argument_type_check(list<Data_Type> type_list);
+	void add_symbol_entry(Symbol_Table_Entry &ste);
 
 	void print(ostream & file_buffer);
 	void print_sym(ostream & file_buffer);

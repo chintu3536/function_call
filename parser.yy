@@ -565,6 +565,8 @@ matched_stmt:
 		$$ = statement_list;
 	}	
 	}
+|
+    
 ;   
 
 unmatched_stmt:
@@ -638,27 +640,121 @@ assignment_statement:
 
 print_statement:
     PRINT '(' arith_expression ')' ';'
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($3!=NULL, "arith_expression cannot be null");
+        Ast * p_ast = $3;
+        Print_Ast * print_ast = new Print_Ast(p_ast, get_line_number());
+        Data_Type dt = void_data_type;
+        print_ast->set_data_type(dt);
+        $$ = print_ast;
+    }
+    }
 |
     PRINT '(' STRING ')' ';'
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($3!=NULL, "string cannot be null");
+        string s = *$3;
+        Print_Ast *p_ast = new Print_Ast(s, get_line_number());
+        Data_Type dt = void_data_type;
+        p_ast->set_data_type(dt);
+        $$ = p_ast;
+    }
+    }
 
 return_stmt:
     RETURN ';'
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        Return_Ast *ret_ast = new Return_Ast(NULL, get_line_number());
+        Data_Type dt = void_data_type;
+        ret_ast->set_data_type(dt);
+        $$ = ret_ast;
+    }
+    }
 |
     RETURN arith_expression ';'
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($2!=NULL, "return argument cannot be null ", get_line_number());
+        Ast *ret = $2;
+        Return_Ast * ret_ast = new Return_Ast(ret, get_line_number());
+        ret_ast->set_data_type(ret->get_data_type());
+        $$ = ret_ast;
+    }
+    }
 ;
 
 function_call:
     NAME '(' parameter_list ')' ';'
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT(($1)!=NULL, "Function name in function call cannot be null")
+        string name = *($1);
+        if(current_procedure->variable_in_symbol_list_check(name)){
+            CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable name and function name matches", get_line_number());
+        }
+        else{
+            if(!program_object.variable_proc_name_check(name)){
+                CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Function has not been declared", get_line_number());
+            }
+        }
+        list<Ast * > arg_list = $3;
+        Procedure *proc= program_object.get_procedure(name);
+        list<Data_Type> type_list;
+        list<Ast *>::iterator =it;
+        for(it=arg_list.begin();it!=arg_list.end();it++)
+        {
+            type_list.push_back((*it)->get_data_type());
+        }
+        if(!proc->argument_type_check(type_list)){
+            CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Arguments do not match the function definition", get_line_number());
+        }
+        Func_Call_Ast *func_ast = new Func_Call_Ast(name, arg_list, get_line_number());
+        func_ast->set_data_type(proc->get_return_type());
+        $$ = func_ast;
+    }
+    }
 ;
 
 parameter_list:
-
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        list<Ast *> arg_list;
+        $$ = arg_list;
+    }
+    }
 |
     parameter_list ',' parameter
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($1!=NULL && $3!=NULL, "parameter cannot be null", get_line_number());
+        list<Ast *> arg_list = $1;
+        Ast *param = $3;
+        arg_list.push_back(param);
+        $$ = arg_list;
+    }
+    }
 ;
 
 parameter:
     arith_expression
+    {
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($1!=NULL, "arith_expression cannot be null", get_line_number());
+        Ast * arith_ast = $1;
+        $$ = arith_ast;
+    }
+    }
 ;
 
 arith_expression:
@@ -756,7 +852,12 @@ arith_expression:
 |
     function_call
     {
-
+    if(NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT(($1!=NULL), "Func call cannot be null", get_line_number());
+        Ast *func_ast = $1;
+        $$ = func_ast;
+    }
     }
 ;
 

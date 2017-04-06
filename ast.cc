@@ -732,6 +732,7 @@ Sequence_Ast::Sequence_Ast(int line)
 
 Sequence_Ast::~Sequence_Ast()
 {
+	
 }
 
 void Sequence_Ast::ast_push_back(Ast *ast)

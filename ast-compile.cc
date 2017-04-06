@@ -349,7 +349,8 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 	Icode_Stmt * bool_stmt = new Compute_IC_Stmt(op, lhs_opd, rhs_opd, out_res, st);
 
 	lhs_reg->reset_use_for_expr_result();
-	rhs_reg->reset_use_for_expr_result();
+	rhs_reg->reset_use_for_expr_result();	~Func_Call_Ast();
+
 	out_reg->reset_use_for_expr_result();
 
 	list<Icode_Stmt *> bool_list;

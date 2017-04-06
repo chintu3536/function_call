@@ -14,6 +14,7 @@
     Symbol_Table * symbol_table;
     Sequence_Ast *sequence_Ast;
     Ast * ast;
+    Procedure *proc;
 };
 
 %left OR
@@ -54,6 +55,11 @@
 %type <ast> variable
 %type <ast> constant
 
+%type <> procedure_definition_list
+%type <proc> procedure_declaration
+%type <string_value> func_type
+%type <> argument_list
+ 
 
 %start program
 
@@ -124,7 +130,7 @@ procedure_declaration_list:
 ;
 
 procedure_declaration:
-    type NAME '(' argument_list ')' ';'
+    func_type NAME '(' argument_list ')' ';'
     {
     if (NOT_ONLY_PARSE)
     {
@@ -152,7 +158,7 @@ procedure_declaration:
     }
 ;
 
-type:
+func_type:
     VOID
     {
     if (NOT_ONLY_PARSE)
@@ -174,6 +180,7 @@ type:
     {
         $$ = "float";
     }
+;
 
 argument_list:
     //Empty argument list
@@ -530,8 +537,6 @@ matched_stmt:
 		$$ = statement_list;
 	}	
 	}
-|
-    
 ;   
 
 unmatched_stmt:

@@ -34,7 +34,8 @@ typedef enum
 	a_op_o1_o2_r,	/* r <- o1 op o2 */
 	a_op_o1_o2_st,	/*for conditional branch*/
 	a_op_st,	/* label instr */
-	a_nsy		/* not specified yet */
+	a_nsy,		/* not specified yet */
+	a_op_o1_o2
 } Assembly_Format;
 
 typedef enum 
@@ -49,7 +50,8 @@ typedef enum
 	i_r_o1_op_o2,	/* r <- o1 op o2 */
 	i_op_o1_o2_st,	/* for conditional branch */
 	i_op_st,	/* label instr */
-	i_nsy		/* not specified yet */
+	i_nsy,		/* not specified yet */
+	i_o1_op_o2
 } Icode_Format;
 
 typedef enum 
@@ -92,7 +94,17 @@ typedef enum
 	j,
 	label,
 	ret_inst,
-	nop
+	nop,
+	la,
+	imm_add,
+	move_d,
+	jal,
+	syscall,
+	seq_d,
+	slt_d,
+	sle_d,
+	bc1t,
+	bc1f
 } Tgt_Op;
 
 typedef enum

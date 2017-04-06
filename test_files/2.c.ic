@@ -1,0 +1,15 @@
+  Procedure: a
+  Intermediate Code Statements
+	iLoad:    	v0 <- 1
+	store:    	b <- v0
+	iLoad:    	v0 <- 1
+	move:    	v1 <- v0
+	return
+  Procedure: b
+  Intermediate Code Statements
+	iLoad:    	v0 <- 1
+	move:    	v1 <- v0
+	return
+  Procedure: main
+  Intermediate Code Statements
+	return

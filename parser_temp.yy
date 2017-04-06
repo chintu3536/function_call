@@ -19,11 +19,15 @@ procedure_declaration_list:
 ;
 
 procedure_declaration:
-    VOID NAME '(' argument_list ')' ';'
+    type NAME '(' argument_list ')' ';'
+;
+
+type:
+    VOID
 |
-    INTEGER NAME '(' argument_list ')' ';'
+    INTEGER
 |
-    FLOAT NAME '(' argument_list ')' ';'
+    FLOAT
 ;
 
 procedure_definition_list:
@@ -119,8 +123,6 @@ do_while_statement:
 
 assignment_statement:
     variable ASSIGN arith_expression ';'
-|
-    variable ASSIGN function_call ';'
 ;
 
 print_statement:
@@ -166,6 +168,8 @@ arith_expression:
     expression_term
 |
     boolean_expression '?' arith_expression ':' arith_expression
+|
+    function_call
 ;
 
 

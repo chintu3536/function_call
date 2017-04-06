@@ -3,8 +3,7 @@ Semantic checks to lookout for:
 Function Declarations & Function Definitions
 --------------------------------------------
 1) Two procedures with the same name are not allowed
-2) A procedure should have same type of return value (int / float) except that a void return can exist along with either int or
-   float return (i.e. a procedure may be declared to be an int/float but may not return a value)
+2) A procedure should have same type of return value (int / float) except that a void return can exist along with either int or float return (i.e. a procedure may be declared to be an int/float but may not return a value)
 3) Return type in the procedure prototype and the return value in the procedure definition should match. 
 4) Number, data types and names of formal parameters in procedure's prototype and its definition should match.
 5) Formal parameter names and the procedure's name should be different
@@ -33,7 +32,7 @@ Other features to be supported
 1) Print statement to be supported. The syntax for print statement should be:
    print(variable); or print(arithmetic_expression); or print(constant); or print(string);
    Function calls are not allowed inside print.
-2) Special care needs to be taken while implementing floating comparison operations since the MIPS floating comparison instructions are different than integer comparison instructions. 
+2) Special care needs to be taken while implementing floating comparison operations since the MIPS floating comparison 		instructions are different than integer comparison instructions. 
 
 
 Revision

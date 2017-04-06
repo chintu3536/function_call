@@ -1,15 +1,16 @@
 void main();
-int one();
+int one(int a);
 main()
 {
 	int a;
 	print(1+a);
 	print(1);
-	a = one();
+	a = one(1);
 	return;
 }
 
-one()
+one(int b)
 {
-	return 1;
+	b = 10;
+	return b ;
 }

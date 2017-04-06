@@ -60,7 +60,7 @@
 %%
 
 program:
-    declaration_list procedure_definition
+    declaration_list procedure_definition_list
     {
     if (NOT_ONLY_PARSE)
     {
@@ -112,38 +112,113 @@ declaration_list:
 procedure_declaration_list:
     procedure_declaration
     {
-        
+        Procedure * proc = $1;
+        program_object.add_procedure(proc, get_line_number());
     }
 |
     procedure_declaration_list procedure_declaration
     {
-
+        Procedure * proc = $2;
+        program_object.add_procedure(proc, get_line_number());
     }
 ;
 
 procedure_declaration:
-    VOID NAME '(' ')' ';'
+    type NAME '(' argument_list ')' ';'
     {
     if (NOT_ONLY_PARSE)
     {
         CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
-        CHECK_INVARIANT((*$2 == "main"), "Procedure name must be main in declaration");
+        string proc_name = *$2;
+        CHECK_INVARIANT(!program_object.variable_proc_name_check(proc_name),
+                                     "Overloading of the procedure is not allowed");
+        string type = *$1;
+        CHECK_INVARIANT(type = "void" || type = "int" || type = "float", "Unknown type in procedure_declaration");
+
+        Data_Type dt;
+        if (type == "void")
+            dt = void_data_type;
+        else if (type == "int")
+            dt = int_data_type;
+        else
+            dt = double_data_type;
+        Procedure * proc = new Procedure(dt, proc_name, get_line_number());
+        program_object.add_procedure(proc, get_line_number());
+
+        list<pair<Data_Type, string> > arg_list = *$4;
+        proc->set_argument_list(arg_list);
+        $$ = proc;
     }
     }
 ;
 
+type:
+    VOID
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = "void";
+    }
+    }
+|
+    INTEGER
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = "int";
+    }
+|
+    FLOAT
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        $$ = "float";
+    }
+
+argument_list:
+    //Empty argument list
+    if (NOT_ONLY_PARSE)
+    {
+        list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
+        $$ = arg_list;
+    }
+|
+    argument
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
+        arg_list->push_back(*$1);
+        $$ = arg_list;
+    }
+    }
+|
+    argument ',' argument_list
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        list<pair<Data_Type, string> > * arg_list = $3;
+        arg_list->push_back(*$1);
+        $$ = arg_list;
+    }
+    }
+;
+
+argument:
+    INTEGER NAME
+|
+    FLOAT NAME
+;
+
 procedure_definition:
-    NAME '(' ')' 
+    NAME '(' argument_list ')' 
     {
     if (NOT_ONLY_PARSE)
     {
         CHECK_INVARIANT(($1 != NULL), "Procedure name cannot be null");
-        CHECK_INVARIANT((*$1 == "main"), "Procedure name must be main");
-
         string proc_name = *$1;
-
-        current_procedure = new Procedure(void_data_type, proc_name, get_line_number());
-
+        CHECK_INVARIANT(program_object.variable_proc_name_check(proc_name), 
+                        "Procedure corresponding to the name is not found");
 
         CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
             "Procedure name cannot be same as global variable", get_line_number());
@@ -526,6 +601,33 @@ assignment_statement:
     }
 ;
 
+print_statement:
+    PRINT '(' arith_expression ')' ';'
+|
+    PRINT '(' STRING ')' ';'
+
+return_stmt:
+    RETURN ';'
+|
+    RETURN arith_expression ';'
+;
+
+function_call:
+    NAME '(' parameter_list ')' ';'
+;
+
+parameter_list:
+
+|
+    parameter
+|
+    parameter_list ',' parameter
+;
+
+parameter:
+    arith_expression
+;
+
 arith_expression:
     arith_expression '+' arith_expression
     {
@@ -617,6 +719,11 @@ arith_expression:
         Ast * cond_expr = new Conditional_Operator_Ast(condition, lhs, rhs, get_line_number());
         $$ = cond_expr;
     }
+    }
+|
+    function_call
+    {
+        
     }
 ;
 

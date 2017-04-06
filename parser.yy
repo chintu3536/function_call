@@ -191,6 +191,7 @@ type:
     {
         $$ = "int";
     }
+    }
 |
     FLOAT
     {
@@ -198,13 +199,17 @@ type:
     {
         $$ = "float";
     }
+    }
+;
 
 argument_list:
     // Empty argument list
+    {
     if (NOT_ONLY_PARSE)
     {
         list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
         $$ = arg_list;
+    }
     }
 |
     argument ',' argument_list
@@ -238,6 +243,24 @@ argument:
         string name = *$2;
         pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, name);
         $$ = p;
+    }
+    }
+;
+
+procedure_definition_list:
+    procedure_definition
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($1 != NULL, "procedure_definition can not be null");
+    }
+    }
+|
+    procedure_definition_list procedure_definition
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT($2 != NULL, "procedure_definition can not be null");
     }
     }
 ;
@@ -565,8 +588,6 @@ matched_stmt:
 		$$ = statement_list;
 	}	
 	}
-|
-    
 ;   
 
 unmatched_stmt:
@@ -664,6 +685,7 @@ print_statement:
         $$ = p_ast;
     }
     }
+;
 
 return_stmt:
     RETURN ';'

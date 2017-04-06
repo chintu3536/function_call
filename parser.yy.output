@@ -1,0 +1,1708 @@
+[parser.yy (info)] Line 1099: 
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_list procedure_definition_list
+2: declaration_list ->  procedure_declaration_list
+3: declaration_list ->  variable_declaration_list procedure_declaration_list
+4: declaration_list ->  procedure_declaration_list variable_declaration_list
+5: procedure_declaration_list ->  procedure_declaration
+6: procedure_declaration_list ->  procedure_declaration_list procedure_declaration
+7: procedure_declaration (NAME) ->  type NAME '(' argument_list ')' ';'
+8: type (VOID) ->  VOID
+9: type (INTEGER) ->  INTEGER
+10: type (FLOAT) ->  FLOAT
+11: argument_list ->  <empty>
+12: argument_list (',') ->  argument ',' argument_list
+13: argument (INTEGER) ->  INTEGER NAME
+14: argument (FLOAT) ->  FLOAT NAME
+15: procedure_definition_list ->  procedure_definition
+16: procedure_definition_list ->  procedure_definition_list procedure_definition
+17: procedure_definition (NAME) ->  NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}'
+18: #0001 ->  <empty>
+19: #0002 ->  <empty>
+20: optional_variable_declaration_list ->  <empty>
+21: optional_variable_declaration_list ->  variable_declaration_list
+22: variable_declaration_list ->  variable_declaration
+23: variable_declaration_list ->  variable_declaration_list variable_declaration
+24: variable_declaration (';') ->  declaration ';'
+25: declaration (INTEGER) ->  INTEGER variable_list
+26: declaration (FLOAT) ->  FLOAT variable_list
+27: variable_list (NAME) ->  NAME
+28: variable_list (',') ->  variable_list ',' NAME
+29: statement_list ->  <empty>
+30: statement_list ->  statement_list statement
+31: statement ->  matched_stmt
+32: statement ->  unmatched_stmt
+33: matched_stmt ->  assignment_statement
+34: matched_stmt (WHILE) ->  WHILE '(' boolean_expression ')' matched_stmt
+35: matched_stmt ->  do_while_statement
+36: matched_stmt (IF) ->  IF '(' boolean_expression ')' matched_stmt ELSE matched_stmt
+37: matched_stmt ('{') ->  '{' statement_list '}'
+38: unmatched_stmt (IF) ->  IF '(' boolean_expression ')' statement
+39: unmatched_stmt (IF) ->  IF '(' boolean_expression ')' matched_stmt ELSE unmatched_stmt
+40: unmatched_stmt (WHILE) ->  WHILE '(' boolean_expression ')' unmatched_stmt
+41: do_while_statement (DO) ->  DO statement WHILE '(' boolean_expression ')' ';'
+42: assignment_statement (ASSIGN) ->  variable ASSIGN arith_expression ';'
+43: print_statement ('(') ->  PRINT '(' arith_expression ')' ';'
+44: print_statement ('(') ->  PRINT '(' STRING ')' ';'
+45: return_stmt (RETURN) ->  RETURN ';'
+46: return_stmt (RETURN) ->  RETURN arith_expression ';'
+47: function_call (NAME) ->  NAME '(' parameter_list ')' ';'
+48: parameter_list ->  <empty>
+49: parameter_list (',') ->  parameter_list ',' parameter
+50: parameter ->  arith_expression
+51: arith_expression ('+') ->  arith_expression '+' arith_expression
+52: arith_expression ('-') ->  arith_expression '-' arith_expression
+53: arith_expression ('*') ->  arith_expression '*' arith_expression
+54: arith_expression ('/') ->  arith_expression '/' arith_expression
+55: arith_expression (UMINUS) ->  '-' arith_expression
+56: arith_expression ('(') ->  '(' arith_expression ')'
+57: arith_expression ->  expression_term
+58: arith_expression ('?') ->  boolean_expression '?' arith_expression ':' arith_expression
+59: arith_expression ->  function_call
+60: expression_term ->  variable
+61: expression_term ->  constant
+62: boolean_expression (AND) ->  boolean_expression AND boolean_expression
+63: boolean_expression (OR) ->  boolean_expression OR boolean_expression
+64: boolean_expression (NOT) ->  NOT boolean_expression
+65: boolean_expression ('(') ->  '(' boolean_expression ')'
+66: boolean_expression ->  relational_expression
+67: relational_expression (LESS_THAN) ->  arith_expression LESS_THAN arith_expression
+68: relational_expression (LESS_THAN_EQUAL) ->  arith_expression LESS_THAN_EQUAL arith_expression
+69: relational_expression (GREATER_THAN) ->  arith_expression GREATER_THAN arith_expression
+70: relational_expression (GREATER_THAN_EQUAL) ->  arith_expression GREATER_THAN_EQUAL arith_expression
+71: relational_expression (EQUAL_TO) ->  arith_expression EQUAL_TO arith_expression
+72: relational_expression (NOT_EQUAL_TO) ->  arith_expression NOT_EQUAL_TO arith_expression
+73: variable (NAME) ->  NAME
+74: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+75: constant (DOUBLE_NUMBER) ->  DOUBLE_NUMBER
+76: program_$ ->  program
+
+[parser.yy (info)] 
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: OR
+   258: AND
+   259: EQUAL_TO
+   260: NOT_EQUAL_TO
+   261: LESS_THAN
+   262: LESS_THAN_EQUAL
+   263: GREATER_THAN
+   264: GREATER_THAN_EQUAL
+    43: '+'
+    45: '-'
+    42: '*'
+    47: '/'
+   265: UMINUS
+   266: NOT
+    40: '('
+   267: INTEGER_NUMBER
+   268: DOUBLE_NUMBER
+   269: NAME
+   270: VOID
+   271: INTEGER
+   272: FLOAT
+   273: DO
+   274: WHILE
+   275: IF
+   276: ELSE
+   277: ASSIGN
+   278: RETURN
+    41: ')'
+    59: ';'
+    44: ','
+   123: '{'
+   125: '}'
+    63: '?'
+    58: ':'
+
+[parser.yy (info)] 
+[parser.yy (info)] 
+[parser.yy (info)] 
+Grammar States: 
+[parser.yy (info)] State 0:
+76: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_list to state 2
+  2:   On procedure_declaration_list to state 3
+  3:   On variable_declaration_list to state 4
+  4:   On procedure_declaration to state 5
+  5:   On variable_declaration to state 6
+  6:   On type to state 7
+  7:   On declaration to state 8
+  8:   On VOID to state 9
+  9:   On INTEGER to state 10
+  10:   On FLOAT to state 11
+
+
+State 1:
+76: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_list  . procedure_definition_list 
+  0:   On procedure_definition_list to state 12
+  1:   On procedure_definition to state 13
+  2:   On NAME to state 14
+
+
+State 3:
+2: declaration_list -> procedure_declaration_list  . 
+4: declaration_list -> procedure_declaration_list  . variable_declaration_list 
+6: procedure_declaration_list -> procedure_declaration_list  . procedure_declaration 
+  0:   On variable_declaration_list to state 15
+  1:   On procedure_declaration to state 16
+  2:   On variable_declaration to state 6
+  3:   On type to state 7
+  4:   On declaration to state 8
+  5:   On VOID to state 9
+  6:   On INTEGER to state 10
+  7:   On FLOAT to state 11
+  Reduce by 2: declaration_list -> procedure_declaration_list  . 
+
+
+State 4:
+3: declaration_list -> variable_declaration_list  . procedure_declaration_list 
+23: variable_declaration_list -> variable_declaration_list  . variable_declaration 
+  0:   On procedure_declaration_list to state 17
+  1:   On variable_declaration to state 18
+  2:   On procedure_declaration to state 5
+  3:   On declaration to state 8
+  4:   On type to state 7
+  5:   On INTEGER to state 10
+  6:   On FLOAT to state 11
+  7:   On VOID to state 9
+
+
+State 5:
+5: procedure_declaration_list -> procedure_declaration  . 
+  Reduce by 5: procedure_declaration_list -> procedure_declaration  . 
+
+
+State 6:
+22: variable_declaration_list -> variable_declaration  . 
+  Reduce by 22: variable_declaration_list -> variable_declaration  . 
+
+
+State 7:
+7: procedure_declaration -> type  . NAME '(' argument_list ')' ';' 
+  0:   On NAME to state 19
+
+
+State 8:
+24: variable_declaration -> declaration  . ';' 
+  0:   On ';' to state 20
+
+
+State 9:
+8: type -> VOID  . 
+  Reduce by 8: type -> VOID  . 
+
+
+State 10:
+9: type -> INTEGER  . 
+25: declaration -> INTEGER  . variable_list 
+  0:   On variable_list to state 21
+  1:   On NAME to state 22
+  Reduce by 9: type -> INTEGER  . 
+Solved SR CONFLICT on NAME:
+	shift to state 22, removed NAME from LA-set of rule 9)
+
+
+State 11:
+10: type -> FLOAT  . 
+26: declaration -> FLOAT  . variable_list 
+  0:   On variable_list to state 23
+  1:   On NAME to state 22
+  Reduce by 10: type -> FLOAT  . 
+Solved SR CONFLICT on NAME:
+	shift to state 22, removed NAME from LA-set of rule 10)
+
+
+State 12:
+1: program -> declaration_list procedure_definition_list  . 
+16: procedure_definition_list -> procedure_definition_list  . procedure_definition 
+  0:   On procedure_definition to state 24
+  1:   On NAME to state 14
+  Reduce by 1: program -> declaration_list procedure_definition_list  . 
+
+
+State 13:
+15: procedure_definition_list -> procedure_definition  . 
+  Reduce by 15: procedure_definition_list -> procedure_definition  . 
+
+
+State 14:
+17: procedure_definition -> NAME  . '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}' 
+  0:   On '(' to state 25
+
+
+State 15:
+4: declaration_list -> procedure_declaration_list variable_declaration_list  . 
+23: variable_declaration_list -> variable_declaration_list  . variable_declaration 
+  0:   On variable_declaration to state 18
+  1:   On declaration to state 8
+  2:   On INTEGER to state 26
+  3:   On FLOAT to state 27
+  Reduce by 4: declaration_list -> procedure_declaration_list variable_declaration_list  . 
+
+
+State 16:
+6: procedure_declaration_list -> procedure_declaration_list procedure_declaration  . 
+  Reduce by 6: procedure_declaration_list -> procedure_declaration_list procedure_declaration  . 
+
+
+State 17:
+3: declaration_list -> variable_declaration_list procedure_declaration_list  . 
+6: procedure_declaration_list -> procedure_declaration_list  . procedure_declaration 
+  0:   On procedure_declaration to state 16
+  1:   On type to state 7
+  2:   On VOID to state 9
+  3:   On INTEGER to state 28
+  4:   On FLOAT to state 29
+  Reduce by 3: declaration_list -> variable_declaration_list procedure_declaration_list  . 
+
+
+State 18:
+23: variable_declaration_list -> variable_declaration_list variable_declaration  . 
+  Reduce by 23: variable_declaration_list -> variable_declaration_list variable_declaration  . 
+
+
+State 19:
+7: procedure_declaration -> type NAME  . '(' argument_list ')' ';' 
+  0:   On '(' to state 30
+
+
+State 20:
+24: variable_declaration -> declaration ';'  . 
+  Reduce by 24: variable_declaration -> declaration ';'  . 
+
+
+State 21:
+25: declaration -> INTEGER variable_list  . 
+28: variable_list -> variable_list  . ',' NAME 
+  0:   On ',' to state 31
+  Reduce by 25: declaration -> INTEGER variable_list  . 
+
+
+State 22:
+27: variable_list -> NAME  . 
+  Reduce by 27: variable_list -> NAME  . 
+
+
+State 23:
+26: declaration -> FLOAT variable_list  . 
+28: variable_list -> variable_list  . ',' NAME 
+  0:   On ',' to state 31
+  Reduce by 26: declaration -> FLOAT variable_list  . 
+
+
+State 24:
+16: procedure_definition_list -> procedure_definition_list procedure_definition  . 
+  Reduce by 16: procedure_definition_list -> procedure_definition_list procedure_definition  . 
+
+
+State 25:
+17: procedure_definition -> NAME '('  . argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}' 
+  0:   On argument_list to state 32
+  1:   On argument to state 33
+  2:   On INTEGER to state 34
+  3:   On FLOAT to state 35
+  Reduce by 11: argument_list ->  . 
+
+
+State 26:
+25: declaration -> INTEGER  . variable_list 
+  0:   On variable_list to state 21
+  1:   On NAME to state 22
+
+
+State 27:
+26: declaration -> FLOAT  . variable_list 
+  0:   On variable_list to state 23
+  1:   On NAME to state 22
+
+
+State 28:
+9: type -> INTEGER  . 
+  Reduce by 9: type -> INTEGER  . 
+
+
+State 29:
+10: type -> FLOAT  . 
+  Reduce by 10: type -> FLOAT  . 
+
+
+State 30:
+7: procedure_declaration -> type NAME '('  . argument_list ')' ';' 
+  0:   On argument_list to state 36
+  1:   On argument to state 33
+  2:   On INTEGER to state 34
+  3:   On FLOAT to state 35
+  Reduce by 11: argument_list ->  . 
+
+
+State 31:
+28: variable_list -> variable_list ','  . NAME 
+  0:   On NAME to state 37
+
+
+State 32:
+17: procedure_definition -> NAME '(' argument_list  . ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}' 
+  0:   On ')' to state 38
+
+
+State 33:
+12: argument_list -> argument  . ',' argument_list 
+  0:   On ',' to state 39
+
+
+State 34:
+13: argument -> INTEGER  . NAME 
+  0:   On NAME to state 40
+
+
+State 35:
+14: argument -> FLOAT  . NAME 
+  0:   On NAME to state 41
+
+
+State 36:
+7: procedure_declaration -> type NAME '(' argument_list  . ')' ';' 
+  0:   On ')' to state 42
+
+
+State 37:
+28: variable_list -> variable_list ',' NAME  . 
+  Reduce by 28: variable_list -> variable_list ',' NAME  . 
+
+
+State 38:
+17: procedure_definition -> NAME '(' argument_list ')'  . #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}' 
+  0:   On #0001 to state 43
+  Reduce by 18: #0001 ->  . 
+
+
+State 39:
+12: argument_list -> argument ','  . argument_list 
+  0:   On argument_list to state 44
+  1:   On argument to state 33
+  2:   On INTEGER to state 34
+  3:   On FLOAT to state 35
+  Reduce by 11: argument_list ->  . 
+
+
+State 40:
+13: argument -> INTEGER NAME  . 
+  Reduce by 13: argument -> INTEGER NAME  . 
+
+
+State 41:
+14: argument -> FLOAT NAME  . 
+  Reduce by 14: argument -> FLOAT NAME  . 
+
+
+State 42:
+7: procedure_declaration -> type NAME '(' argument_list ')'  . ';' 
+  0:   On ';' to state 45
+
+
+State 43:
+17: procedure_definition -> NAME '(' argument_list ')' #0001  . '{' optional_variable_declaration_list #0002 statement_list return_stmt '}' 
+  0:   On '{' to state 46
+
+
+State 44:
+12: argument_list -> argument ',' argument_list  . 
+  Reduce by 12: argument_list -> argument ',' argument_list  . 
+
+
+State 45:
+7: procedure_declaration -> type NAME '(' argument_list ')' ';'  . 
+  Reduce by 7: procedure_declaration -> type NAME '(' argument_list ')' ';'  . 
+
+
+State 46:
+17: procedure_definition -> NAME '(' argument_list ')' #0001 '{'  . optional_variable_declaration_list #0002 statement_list return_stmt '}' 
+  0:   On optional_variable_declaration_list to state 47
+  1:   On variable_declaration_list to state 48
+  2:   On variable_declaration to state 6
+  3:   On declaration to state 8
+  4:   On INTEGER to state 26
+  5:   On FLOAT to state 27
+  Reduce by 20: optional_variable_declaration_list ->  . 
+
+
+State 47:
+17: procedure_definition -> NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list  . #0002 statement_list return_stmt '}' 
+  0:   On #0002 to state 49
+  Reduce by 19: #0002 ->  . 
+
+
+State 48:
+21: optional_variable_declaration_list -> variable_declaration_list  . 
+23: variable_declaration_list -> variable_declaration_list  . variable_declaration 
+  0:   On variable_declaration to state 18
+  1:   On declaration to state 8
+  2:   On INTEGER to state 26
+  3:   On FLOAT to state 27
+  Reduce by 21: optional_variable_declaration_list -> variable_declaration_list  . 
+
+
+State 49:
+17: procedure_definition -> NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002  . statement_list return_stmt '}' 
+  0:   On statement_list to state 50
+  Reduce by 29: statement_list ->  . 
+
+
+State 50:
+17: procedure_definition -> NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list  . return_stmt '}' 
+30: statement_list -> statement_list  . statement 
+  0:   On return_stmt to state 51
+  1:   On statement to state 52
+  2:   On RETURN to state 53
+  3:   On matched_stmt to state 54
+  4:   On unmatched_stmt to state 55
+  5:   On assignment_statement to state 56
+  6:   On WHILE to state 57
+  7:   On do_while_statement to state 58
+  8:   On IF to state 59
+  9:   On '{' to state 60
+  10:   On variable to state 61
+  11:   On DO to state 62
+  12:   On NAME to state 63
+
+
+State 51:
+17: procedure_definition -> NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt  . '}' 
+  0:   On '}' to state 64
+
+
+State 52:
+30: statement_list -> statement_list statement  . 
+  Reduce by 30: statement_list -> statement_list statement  . 
+
+
+State 53:
+45: return_stmt -> RETURN  . ';' 
+46: return_stmt -> RETURN  . arith_expression ';' 
+  0:   On ';' to state 65
+  1:   On arith_expression to state 66
+  2:   On '-' to state 67
+  3:   On '(' to state 68
+  4:   On expression_term to state 69
+  5:   On boolean_expression to state 70
+  6:   On function_call to state 71
+  7:   On variable to state 72
+  8:   On constant to state 73
+  9:   On NOT to state 74
+  10:   On relational_expression to state 75
+  11:   On NAME to state 76
+  12:   On INTEGER_NUMBER to state 77
+  13:   On DOUBLE_NUMBER to state 78
+
+
+State 54:
+31: statement -> matched_stmt  . 
+  Reduce by 31: statement -> matched_stmt  . 
+
+
+State 55:
+32: statement -> unmatched_stmt  . 
+  Reduce by 32: statement -> unmatched_stmt  . 
+
+
+State 56:
+33: matched_stmt -> assignment_statement  . 
+  Reduce by 33: matched_stmt -> assignment_statement  . 
+
+
+State 57:
+34: matched_stmt -> WHILE  . '(' boolean_expression ')' matched_stmt 
+40: unmatched_stmt -> WHILE  . '(' boolean_expression ')' unmatched_stmt 
+  0:   On '(' to state 79
+
+
+State 58:
+35: matched_stmt -> do_while_statement  . 
+  Reduce by 35: matched_stmt -> do_while_statement  . 
+
+
+State 59:
+36: matched_stmt -> IF  . '(' boolean_expression ')' matched_stmt ELSE matched_stmt 
+38: unmatched_stmt -> IF  . '(' boolean_expression ')' statement 
+39: unmatched_stmt -> IF  . '(' boolean_expression ')' matched_stmt ELSE unmatched_stmt 
+  0:   On '(' to state 80
+
+
+State 60:
+37: matched_stmt -> '{'  . statement_list '}' 
+  0:   On statement_list to state 81
+  Reduce by 29: statement_list ->  . 
+
+
+State 61:
+42: assignment_statement -> variable  . ASSIGN arith_expression ';' 
+  0:   On ASSIGN to state 82
+
+
+State 62:
+41: do_while_statement -> DO  . statement WHILE '(' boolean_expression ')' ';' 
+  0:   On statement to state 83
+  1:   On matched_stmt to state 54
+  2:   On unmatched_stmt to state 55
+  3:   On assignment_statement to state 56
+  4:   On WHILE to state 57
+  5:   On do_while_statement to state 58
+  6:   On IF to state 59
+  7:   On '{' to state 60
+  8:   On variable to state 61
+  9:   On DO to state 62
+  10:   On NAME to state 63
+
+
+State 63:
+73: variable -> NAME  . 
+  Reduce by 73: variable -> NAME  . 
+
+
+State 64:
+17: procedure_definition -> NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}'  . 
+  Reduce by 17: procedure_definition -> NAME '(' argument_list ')' #0001 '{' optional_variable_declaration_list #0002 statement_list return_stmt '}'  . 
+
+
+State 65:
+45: return_stmt -> RETURN ';'  . 
+  Reduce by 45: return_stmt -> RETURN ';'  . 
+
+
+State 66:
+46: return_stmt -> RETURN arith_expression  . ';' 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On ';' to state 84
+  1:   On '+' to state 85
+  2:   On '-' to state 86
+  3:   On '*' to state 87
+  4:   On '/' to state 88
+  5:   On LESS_THAN to state 89
+  6:   On LESS_THAN_EQUAL to state 90
+  7:   On GREATER_THAN to state 91
+  8:   On GREATER_THAN_EQUAL to state 92
+  9:   On EQUAL_TO to state 93
+  10:   On NOT_EQUAL_TO to state 94
+
+
+State 67:
+55: arith_expression -> '-'  . arith_expression 
+  0:   On arith_expression to state 95
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 68:
+56: arith_expression -> '('  . arith_expression ')' 
+65: boolean_expression -> '('  . boolean_expression ')' 
+  0:   On arith_expression to state 96
+  1:   On boolean_expression to state 97
+  2:   On '-' to state 67
+  3:   On '(' to state 68
+  4:   On expression_term to state 69
+  5:   On function_call to state 71
+  6:   On NOT to state 74
+  7:   On relational_expression to state 75
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 69:
+57: arith_expression -> expression_term  . 
+  Reduce by 57: arith_expression -> expression_term  . 
+
+
+State 70:
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+  0:   On '?' to state 98
+  1:   On AND to state 99
+  2:   On OR to state 100
+
+
+State 71:
+59: arith_expression -> function_call  . 
+  Reduce by 59: arith_expression -> function_call  . 
+
+
+State 72:
+60: expression_term -> variable  . 
+  Reduce by 60: expression_term -> variable  . 
+
+
+State 73:
+61: expression_term -> constant  . 
+  Reduce by 61: expression_term -> constant  . 
+
+
+State 74:
+64: boolean_expression -> NOT  . boolean_expression 
+  0:   On boolean_expression to state 101
+  1:   On NOT to state 74
+  2:   On '(' to state 68
+  3:   On relational_expression to state 75
+  4:   On arith_expression to state 102
+  5:   On '-' to state 67
+  6:   On expression_term to state 69
+  7:   On function_call to state 71
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 75:
+66: boolean_expression -> relational_expression  . 
+  Reduce by 66: boolean_expression -> relational_expression  . 
+
+
+State 76:
+47: function_call -> NAME  . '(' parameter_list ')' ';' 
+73: variable -> NAME  . 
+  0:   On '(' to state 103
+  Reduce by 73: variable -> NAME  . 
+
+
+State 77:
+74: constant -> INTEGER_NUMBER  . 
+  Reduce by 74: constant -> INTEGER_NUMBER  . 
+
+
+State 78:
+75: constant -> DOUBLE_NUMBER  . 
+  Reduce by 75: constant -> DOUBLE_NUMBER  . 
+
+
+State 79:
+34: matched_stmt -> WHILE '('  . boolean_expression ')' matched_stmt 
+40: unmatched_stmt -> WHILE '('  . boolean_expression ')' unmatched_stmt 
+  0:   On boolean_expression to state 104
+  1:   On NOT to state 74
+  2:   On '(' to state 68
+  3:   On relational_expression to state 75
+  4:   On arith_expression to state 102
+  5:   On '-' to state 67
+  6:   On expression_term to state 69
+  7:   On function_call to state 71
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 80:
+36: matched_stmt -> IF '('  . boolean_expression ')' matched_stmt ELSE matched_stmt 
+38: unmatched_stmt -> IF '('  . boolean_expression ')' statement 
+39: unmatched_stmt -> IF '('  . boolean_expression ')' matched_stmt ELSE unmatched_stmt 
+  0:   On boolean_expression to state 105
+  1:   On NOT to state 74
+  2:   On '(' to state 68
+  3:   On relational_expression to state 75
+  4:   On arith_expression to state 102
+  5:   On '-' to state 67
+  6:   On expression_term to state 69
+  7:   On function_call to state 71
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 81:
+37: matched_stmt -> '{' statement_list  . '}' 
+30: statement_list -> statement_list  . statement 
+  0:   On '}' to state 106
+  1:   On statement to state 52
+  2:   On matched_stmt to state 54
+  3:   On unmatched_stmt to state 55
+  4:   On assignment_statement to state 56
+  5:   On WHILE to state 57
+  6:   On do_while_statement to state 58
+  7:   On IF to state 59
+  8:   On '{' to state 60
+  9:   On variable to state 61
+  10:   On DO to state 62
+  11:   On NAME to state 63
+
+
+State 82:
+42: assignment_statement -> variable ASSIGN  . arith_expression ';' 
+  0:   On arith_expression to state 107
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 83:
+41: do_while_statement -> DO statement  . WHILE '(' boolean_expression ')' ';' 
+  0:   On WHILE to state 108
+
+
+State 84:
+46: return_stmt -> RETURN arith_expression ';'  . 
+  Reduce by 46: return_stmt -> RETURN arith_expression ';'  . 
+
+
+State 85:
+51: arith_expression -> arith_expression '+'  . arith_expression 
+  0:   On arith_expression to state 109
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 86:
+52: arith_expression -> arith_expression '-'  . arith_expression 
+  0:   On arith_expression to state 110
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 87:
+53: arith_expression -> arith_expression '*'  . arith_expression 
+  0:   On arith_expression to state 111
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 88:
+54: arith_expression -> arith_expression '/'  . arith_expression 
+  0:   On arith_expression to state 112
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 89:
+67: relational_expression -> arith_expression LESS_THAN  . arith_expression 
+  0:   On arith_expression to state 113
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 90:
+68: relational_expression -> arith_expression LESS_THAN_EQUAL  . arith_expression 
+  0:   On arith_expression to state 114
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 91:
+69: relational_expression -> arith_expression GREATER_THAN  . arith_expression 
+  0:   On arith_expression to state 115
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 92:
+70: relational_expression -> arith_expression GREATER_THAN_EQUAL  . arith_expression 
+  0:   On arith_expression to state 116
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 93:
+71: relational_expression -> arith_expression EQUAL_TO  . arith_expression 
+  0:   On arith_expression to state 117
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 94:
+72: relational_expression -> arith_expression NOT_EQUAL_TO  . arith_expression 
+  0:   On arith_expression to state 118
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 95:
+55: arith_expression -> '-' arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0 (removed by precedence):   On '+' to state 85
+  1 (removed by precedence):   On '-' to state 86
+  2 (removed by precedence):   On '*' to state 87
+  3 (removed by precedence):   On '/' to state 88
+  4 (removed by precedence):   On LESS_THAN to state 89
+  5 (removed by precedence):   On LESS_THAN_EQUAL to state 90
+  6 (removed by precedence):   On GREATER_THAN to state 91
+  7 (removed by precedence):   On GREATER_THAN_EQUAL to state 92
+  8 (removed by precedence):   On EQUAL_TO to state 93
+  9 (removed by precedence):   On NOT_EQUAL_TO to state 94
+  Reduce by 55: arith_expression -> '-' arith_expression  . 
+
+
+State 96:
+56: arith_expression -> '(' arith_expression  . ')' 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On ')' to state 119
+  1:   On '+' to state 85
+  2:   On '-' to state 86
+  3:   On '*' to state 87
+  4:   On '/' to state 88
+  5:   On LESS_THAN to state 89
+  6:   On LESS_THAN_EQUAL to state 90
+  7:   On GREATER_THAN to state 91
+  8:   On GREATER_THAN_EQUAL to state 92
+  9:   On EQUAL_TO to state 93
+  10:   On NOT_EQUAL_TO to state 94
+
+
+State 97:
+65: boolean_expression -> '(' boolean_expression  . ')' 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+  0:   On ')' to state 120
+  1:   On '?' to state 98
+  2:   On AND to state 99
+  3:   On OR to state 100
+
+
+State 98:
+58: arith_expression -> boolean_expression '?'  . arith_expression ':' arith_expression 
+  0:   On arith_expression to state 121
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 99:
+62: boolean_expression -> boolean_expression AND  . boolean_expression 
+  0:   On boolean_expression to state 122
+  1:   On NOT to state 74
+  2:   On '(' to state 68
+  3:   On relational_expression to state 75
+  4:   On arith_expression to state 102
+  5:   On '-' to state 67
+  6:   On expression_term to state 69
+  7:   On function_call to state 71
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 100:
+63: boolean_expression -> boolean_expression OR  . boolean_expression 
+  0:   On boolean_expression to state 123
+  1:   On NOT to state 74
+  2:   On '(' to state 68
+  3:   On relational_expression to state 75
+  4:   On arith_expression to state 102
+  5:   On '-' to state 67
+  6:   On expression_term to state 69
+  7:   On function_call to state 71
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 101:
+64: boolean_expression -> NOT boolean_expression  . 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+  0 (removed by precedence):   On AND to state 99
+  1 (removed by precedence):   On OR to state 100
+  2 (removed by precedence):   On '?' to state 98
+  Reduce by 64: boolean_expression -> NOT boolean_expression  . 
+
+
+State 102:
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+  0:   On LESS_THAN to state 89
+  1:   On LESS_THAN_EQUAL to state 90
+  2:   On GREATER_THAN to state 91
+  3:   On GREATER_THAN_EQUAL to state 92
+  4:   On EQUAL_TO to state 93
+  5:   On NOT_EQUAL_TO to state 94
+  6:   On '+' to state 85
+  7:   On '-' to state 86
+  8:   On '*' to state 87
+  9:   On '/' to state 88
+
+
+State 103:
+47: function_call -> NAME '('  . parameter_list ')' ';' 
+  0:   On parameter_list to state 124
+  Reduce by 48: parameter_list ->  . 
+
+
+State 104:
+34: matched_stmt -> WHILE '(' boolean_expression  . ')' matched_stmt 
+40: unmatched_stmt -> WHILE '(' boolean_expression  . ')' unmatched_stmt 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+  0:   On ')' to state 125
+  1:   On AND to state 99
+  2:   On OR to state 100
+  3:   On '?' to state 98
+
+
+State 105:
+36: matched_stmt -> IF '(' boolean_expression  . ')' matched_stmt ELSE matched_stmt 
+38: unmatched_stmt -> IF '(' boolean_expression  . ')' statement 
+39: unmatched_stmt -> IF '(' boolean_expression  . ')' matched_stmt ELSE unmatched_stmt 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+  0:   On ')' to state 126
+  1:   On AND to state 99
+  2:   On OR to state 100
+  3:   On '?' to state 98
+
+
+State 106:
+37: matched_stmt -> '{' statement_list '}'  . 
+  Reduce by 37: matched_stmt -> '{' statement_list '}'  . 
+
+
+State 107:
+42: assignment_statement -> variable ASSIGN arith_expression  . ';' 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On ';' to state 127
+  1:   On '+' to state 85
+  2:   On '-' to state 86
+  3:   On '*' to state 87
+  4:   On '/' to state 88
+  5:   On LESS_THAN to state 89
+  6:   On LESS_THAN_EQUAL to state 90
+  7:   On GREATER_THAN to state 91
+  8:   On GREATER_THAN_EQUAL to state 92
+  9:   On EQUAL_TO to state 93
+  10:   On NOT_EQUAL_TO to state 94
+
+
+State 108:
+41: do_while_statement -> DO statement WHILE  . '(' boolean_expression ')' ';' 
+  0:   On '(' to state 128
+
+
+State 109:
+51: arith_expression -> arith_expression '+' arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0 (removed by precedence):   On '+' to state 85
+  1 (removed by precedence):   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4 (removed by precedence):   On LESS_THAN to state 89
+  5 (removed by precedence):   On LESS_THAN_EQUAL to state 90
+  6 (removed by precedence):   On GREATER_THAN to state 91
+  7 (removed by precedence):   On GREATER_THAN_EQUAL to state 92
+  8 (removed by precedence):   On EQUAL_TO to state 93
+  9 (removed by precedence):   On NOT_EQUAL_TO to state 94
+  Reduce by 51: arith_expression -> arith_expression '+' arith_expression  . 
+
+
+State 110:
+52: arith_expression -> arith_expression '-' arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0 (removed by precedence):   On '+' to state 85
+  1 (removed by precedence):   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4 (removed by precedence):   On LESS_THAN to state 89
+  5 (removed by precedence):   On LESS_THAN_EQUAL to state 90
+  6 (removed by precedence):   On GREATER_THAN to state 91
+  7 (removed by precedence):   On GREATER_THAN_EQUAL to state 92
+  8 (removed by precedence):   On EQUAL_TO to state 93
+  9 (removed by precedence):   On NOT_EQUAL_TO to state 94
+  Reduce by 52: arith_expression -> arith_expression '-' arith_expression  . 
+
+
+State 111:
+53: arith_expression -> arith_expression '*' arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0 (removed by precedence):   On '+' to state 85
+  1 (removed by precedence):   On '-' to state 86
+  2 (removed by precedence):   On '*' to state 87
+  3 (removed by precedence):   On '/' to state 88
+  4 (removed by precedence):   On LESS_THAN to state 89
+  5 (removed by precedence):   On LESS_THAN_EQUAL to state 90
+  6 (removed by precedence):   On GREATER_THAN to state 91
+  7 (removed by precedence):   On GREATER_THAN_EQUAL to state 92
+  8 (removed by precedence):   On EQUAL_TO to state 93
+  9 (removed by precedence):   On NOT_EQUAL_TO to state 94
+  Reduce by 53: arith_expression -> arith_expression '*' arith_expression  . 
+
+
+State 112:
+54: arith_expression -> arith_expression '/' arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0 (removed by precedence):   On '+' to state 85
+  1 (removed by precedence):   On '-' to state 86
+  2 (removed by precedence):   On '*' to state 87
+  3 (removed by precedence):   On '/' to state 88
+  4 (removed by precedence):   On LESS_THAN to state 89
+  5 (removed by precedence):   On LESS_THAN_EQUAL to state 90
+  6 (removed by precedence):   On GREATER_THAN to state 91
+  7 (removed by precedence):   On GREATER_THAN_EQUAL to state 92
+  8 (removed by precedence):   On EQUAL_TO to state 93
+  9 (removed by precedence):   On NOT_EQUAL_TO to state 94
+  Reduce by 54: arith_expression -> arith_expression '/' arith_expression  . 
+
+
+State 113:
+67: relational_expression -> arith_expression LESS_THAN arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 67: relational_expression -> arith_expression LESS_THAN arith_expression  . 
+
+
+State 114:
+68: relational_expression -> arith_expression LESS_THAN_EQUAL arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 68: relational_expression -> arith_expression LESS_THAN_EQUAL arith_expression  . 
+
+
+State 115:
+69: relational_expression -> arith_expression GREATER_THAN arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 69: relational_expression -> arith_expression GREATER_THAN arith_expression  . 
+
+
+State 116:
+70: relational_expression -> arith_expression GREATER_THAN_EQUAL arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 70: relational_expression -> arith_expression GREATER_THAN_EQUAL arith_expression  . 
+
+
+State 117:
+71: relational_expression -> arith_expression EQUAL_TO arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 71: relational_expression -> arith_expression EQUAL_TO arith_expression  . 
+
+
+State 118:
+72: relational_expression -> arith_expression NOT_EQUAL_TO arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 72: relational_expression -> arith_expression NOT_EQUAL_TO arith_expression  . 
+
+
+State 119:
+56: arith_expression -> '(' arith_expression ')'  . 
+  Reduce by 56: arith_expression -> '(' arith_expression ')'  . 
+
+
+State 120:
+65: boolean_expression -> '(' boolean_expression ')'  . 
+  Reduce by 65: boolean_expression -> '(' boolean_expression ')'  . 
+
+
+State 121:
+58: arith_expression -> boolean_expression '?' arith_expression  . ':' arith_expression 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On ':' to state 129
+  1:   On '+' to state 85
+  2:   On '-' to state 86
+  3:   On '*' to state 87
+  4:   On '/' to state 88
+  5:   On LESS_THAN to state 89
+  6:   On LESS_THAN_EQUAL to state 90
+  7:   On GREATER_THAN to state 91
+  8:   On GREATER_THAN_EQUAL to state 92
+  9:   On EQUAL_TO to state 93
+  10:   On NOT_EQUAL_TO to state 94
+
+
+State 122:
+62: boolean_expression -> boolean_expression AND boolean_expression  . 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+  0 (removed by precedence):   On AND to state 99
+  1 (removed by precedence):   On OR to state 100
+  2 (removed by precedence):   On '?' to state 98
+  Reduce by 62: boolean_expression -> boolean_expression AND boolean_expression  . 
+
+
+State 123:
+63: boolean_expression -> boolean_expression OR boolean_expression  . 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+  0:   On AND to state 99
+  1 (removed by precedence):   On OR to state 100
+  2 (removed by precedence):   On '?' to state 98
+  Reduce by 63: boolean_expression -> boolean_expression OR boolean_expression  . 
+
+
+State 124:
+47: function_call -> NAME '(' parameter_list  . ')' ';' 
+49: parameter_list -> parameter_list  . ',' parameter 
+  0:   On ')' to state 130
+  1:   On ',' to state 131
+
+
+State 125:
+34: matched_stmt -> WHILE '(' boolean_expression ')'  . matched_stmt 
+40: unmatched_stmt -> WHILE '(' boolean_expression ')'  . unmatched_stmt 
+  0:   On matched_stmt to state 132
+  1:   On unmatched_stmt to state 133
+  2:   On assignment_statement to state 56
+  3:   On WHILE to state 57
+  4:   On do_while_statement to state 58
+  5:   On IF to state 59
+  6:   On '{' to state 60
+  7:   On variable to state 61
+  8:   On DO to state 62
+  9:   On NAME to state 63
+
+
+State 126:
+36: matched_stmt -> IF '(' boolean_expression ')'  . matched_stmt ELSE matched_stmt 
+38: unmatched_stmt -> IF '(' boolean_expression ')'  . statement 
+39: unmatched_stmt -> IF '(' boolean_expression ')'  . matched_stmt ELSE unmatched_stmt 
+  0:   On matched_stmt to state 134
+  1:   On statement to state 135
+  2:   On assignment_statement to state 56
+  3:   On WHILE to state 57
+  4:   On do_while_statement to state 58
+  5:   On IF to state 59
+  6:   On '{' to state 60
+  7:   On unmatched_stmt to state 55
+  8:   On variable to state 61
+  9:   On DO to state 62
+  10:   On NAME to state 63
+
+
+State 127:
+42: assignment_statement -> variable ASSIGN arith_expression ';'  . 
+  Reduce by 42: assignment_statement -> variable ASSIGN arith_expression ';'  . 
+
+
+State 128:
+41: do_while_statement -> DO statement WHILE '('  . boolean_expression ')' ';' 
+  0:   On boolean_expression to state 136
+  1:   On NOT to state 74
+  2:   On '(' to state 68
+  3:   On relational_expression to state 75
+  4:   On arith_expression to state 102
+  5:   On '-' to state 67
+  6:   On expression_term to state 69
+  7:   On function_call to state 71
+  8:   On variable to state 72
+  9:   On constant to state 73
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 129:
+58: arith_expression -> boolean_expression '?' arith_expression ':'  . arith_expression 
+  0:   On arith_expression to state 137
+  1:   On '-' to state 67
+  2:   On '(' to state 68
+  3:   On expression_term to state 69
+  4:   On boolean_expression to state 70
+  5:   On function_call to state 71
+  6:   On variable to state 72
+  7:   On constant to state 73
+  8:   On NOT to state 74
+  9:   On relational_expression to state 75
+  10:   On NAME to state 76
+  11:   On INTEGER_NUMBER to state 77
+  12:   On DOUBLE_NUMBER to state 78
+
+
+State 130:
+47: function_call -> NAME '(' parameter_list ')'  . ';' 
+  0:   On ';' to state 138
+
+
+State 131:
+49: parameter_list -> parameter_list ','  . parameter 
+  0:   On parameter to state 139
+  1:   On arith_expression to state 140
+  2:   On '-' to state 67
+  3:   On '(' to state 68
+  4:   On expression_term to state 69
+  5:   On boolean_expression to state 70
+  6:   On function_call to state 71
+  7:   On variable to state 72
+  8:   On constant to state 73
+  9:   On NOT to state 74
+  10:   On relational_expression to state 75
+  11:   On NAME to state 76
+  12:   On INTEGER_NUMBER to state 77
+  13:   On DOUBLE_NUMBER to state 78
+
+
+State 132:
+34: matched_stmt -> WHILE '(' boolean_expression ')' matched_stmt  . 
+  Reduce by 34: matched_stmt -> WHILE '(' boolean_expression ')' matched_stmt  . 
+
+
+State 133:
+40: unmatched_stmt -> WHILE '(' boolean_expression ')' unmatched_stmt  . 
+  Reduce by 40: unmatched_stmt -> WHILE '(' boolean_expression ')' unmatched_stmt  . 
+
+
+State 134:
+36: matched_stmt -> IF '(' boolean_expression ')' matched_stmt  . ELSE matched_stmt 
+39: unmatched_stmt -> IF '(' boolean_expression ')' matched_stmt  . ELSE unmatched_stmt 
+31: statement -> matched_stmt  . 
+  0:   On ELSE to state 141
+  Reduce by 31: statement -> matched_stmt  . 
+
+
+State 135:
+38: unmatched_stmt -> IF '(' boolean_expression ')' statement  . 
+  Reduce by 38: unmatched_stmt -> IF '(' boolean_expression ')' statement  . 
+
+
+State 136:
+41: do_while_statement -> DO statement WHILE '(' boolean_expression  . ')' ';' 
+62: boolean_expression -> boolean_expression  . AND boolean_expression 
+63: boolean_expression -> boolean_expression  . OR boolean_expression 
+58: arith_expression -> boolean_expression  . '?' arith_expression ':' arith_expression 
+  0:   On ')' to state 142
+  1:   On AND to state 99
+  2:   On OR to state 100
+  3:   On '?' to state 98
+
+
+State 137:
+58: arith_expression -> boolean_expression '?' arith_expression ':' arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 58: arith_expression -> boolean_expression '?' arith_expression ':' arith_expression  . 
+
+
+State 138:
+47: function_call -> NAME '(' parameter_list ')' ';'  . 
+  Reduce by 47: function_call -> NAME '(' parameter_list ')' ';'  . 
+
+
+State 139:
+49: parameter_list -> parameter_list ',' parameter  . 
+  Reduce by 49: parameter_list -> parameter_list ',' parameter  . 
+
+
+State 140:
+50: parameter -> arith_expression  . 
+51: arith_expression -> arith_expression  . '+' arith_expression 
+52: arith_expression -> arith_expression  . '-' arith_expression 
+53: arith_expression -> arith_expression  . '*' arith_expression 
+54: arith_expression -> arith_expression  . '/' arith_expression 
+67: relational_expression -> arith_expression  . LESS_THAN arith_expression 
+68: relational_expression -> arith_expression  . LESS_THAN_EQUAL arith_expression 
+69: relational_expression -> arith_expression  . GREATER_THAN arith_expression 
+70: relational_expression -> arith_expression  . GREATER_THAN_EQUAL arith_expression 
+71: relational_expression -> arith_expression  . EQUAL_TO arith_expression 
+72: relational_expression -> arith_expression  . NOT_EQUAL_TO arith_expression 
+  0:   On '+' to state 85
+  1:   On '-' to state 86
+  2:   On '*' to state 87
+  3:   On '/' to state 88
+  4:   On LESS_THAN to state 89
+  5:   On LESS_THAN_EQUAL to state 90
+  6:   On GREATER_THAN to state 91
+  7:   On GREATER_THAN_EQUAL to state 92
+  8:   On EQUAL_TO to state 93
+  9:   On NOT_EQUAL_TO to state 94
+  Reduce by 50: parameter -> arith_expression  . 
+
+
+State 141:
+36: matched_stmt -> IF '(' boolean_expression ')' matched_stmt ELSE  . matched_stmt 
+39: unmatched_stmt -> IF '(' boolean_expression ')' matched_stmt ELSE  . unmatched_stmt 
+  0:   On matched_stmt to state 143
+  1:   On unmatched_stmt to state 144
+  2:   On assignment_statement to state 56
+  3:   On WHILE to state 57
+  4:   On do_while_statement to state 58
+  5:   On IF to state 59
+  6:   On '{' to state 60
+  7:   On variable to state 61
+  8:   On DO to state 62
+  9:   On NAME to state 63
+
+
+State 142:
+41: do_while_statement -> DO statement WHILE '(' boolean_expression ')'  . ';' 
+  0:   On ';' to state 145
+
+
+State 143:
+36: matched_stmt -> IF '(' boolean_expression ')' matched_stmt ELSE matched_stmt  . 
+  Reduce by 36: matched_stmt -> IF '(' boolean_expression ')' matched_stmt ELSE matched_stmt  . 
+
+
+State 144:
+39: unmatched_stmt -> IF '(' boolean_expression ')' matched_stmt ELSE unmatched_stmt  . 
+  Reduce by 39: unmatched_stmt -> IF '(' boolean_expression ')' matched_stmt ELSE unmatched_stmt  . 
+
+
+State 145:
+41: do_while_statement -> DO statement WHILE '(' boolean_expression ')' ';'  . 
+  Reduce by 41: do_while_statement -> DO statement WHILE '(' boolean_expression ')' ';'  . 
+
+
+

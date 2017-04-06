@@ -288,7 +288,7 @@ public:
 	void print(ostream & file_buffer);
 
 	Code_For_Ast & compile();
-}
+};
 
 class String_Ast:public Ast
 {
@@ -305,7 +305,7 @@ public:
 	void print(ostream & file_buffer);
 
 	Code_For_Ast & compile();
-}
+};
 
 class Return_Ast: public Ast
 {
@@ -334,7 +334,7 @@ public:
 	void print(ostream & file_buffer);
 
 	Code_For_Ast & compile();
-}
+};
 
 class Sequence_Ast: public Ast{
 	list<Ast *> statement_list;

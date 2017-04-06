@@ -27,7 +27,7 @@ Program::~Program()
 
 void Program::delete_all()
 {
-
+	//TODO:
 }
 
 void Program::add_procedure(Procedure * proc, int line)
@@ -74,5 +74,5 @@ bool Program::variable_in_symbol_list_check(string variable)
 
 void global_list_in_proc_check()
 {
-
+	//TODO:
 }

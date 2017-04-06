@@ -60,12 +60,10 @@
 %type <ast> variable
 %type <ast> constant
 
-%type <> procedure_definition_list
 %type <proc> procedure_declaration
 %type <string_value> func_type
 %type <arg_list> argument_list
 %type <arg> argument
-%type <> procedure_definition
 %type <f_ast> function_call
 %type <p_ast> print_statement
 %type <ret_ast> return_stmt
@@ -81,7 +79,7 @@ program:
     {
         CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
 
-        program_object.set_procedure(current_procedure, get_line_number());
+        // program_object.set_procedure(current_procedure, get_line_number());
         program_object.global_list_in_proc_check();
     }
     }
@@ -608,7 +606,7 @@ matched_stmt:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($1!=NULL, "Return statement cannot be null", get_line_number());
+        CHECK_INVARIANT($1!=NULL, "Return statement cannot be null");
         Ast *ret_stmt = $1;
         $$ = ret_stmt;
     }
@@ -618,7 +616,7 @@ matched_stmt:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($1!=NULL, "Function call cannot be null", get_line_number());
+        CHECK_INVARIANT($1!=NULL, "Function call cannot be null");
         Ast *func_ast = $1;
         $$ = func_ast;
     }
@@ -738,7 +736,7 @@ return_stmt:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($2!=NULL, "return argument cannot be null ", get_line_number());
+        CHECK_INVARIANT($2!=NULL, "return argument cannot be null ");
         Ast *ret = $2;
         Return_Ast * ret_ast = new Return_Ast(ret, get_line_number());
         ret_ast->set_data_type(ret->get_data_type());
@@ -755,11 +753,11 @@ function_call:
         CHECK_INVARIANT(($1)!=NULL, "Function name in function call cannot be null")
         string name = *($1);
         if(current_procedure->variable_in_symbol_list_check(name)){
-            CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable name and function name matches", get_line_number());
+            CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable name and function name matches");
         }
         else{
             if(!program_object.variable_proc_name_check(name)){
-                CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Function has not been declared", get_line_number());
+                CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Function has not been declared");
             }
         }
         list<Ast * > arg_list = $3;
@@ -771,7 +769,7 @@ function_call:
             type_list.push_back((*it)->get_data_type());
         }
         if(!proc->argument_type_check(type_list)){
-            CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Arguments do not match the function definition", get_line_number());
+            CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Arguments do not match the function definition");
         }
         Func_Call_Ast *func_ast = new Func_Call_Ast(name, arg_list, get_line_number());
         func_ast->set_data_type(proc->get_return_type());
@@ -793,7 +791,7 @@ parameter_list:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($1!=NULL && $3!=NULL, "parameter cannot be null", get_line_number());
+        CHECK_INVARIANT($1!=NULL && $3!=NULL, "parameter cannot be null");
         list<Ast *> arg_list = $1;
         Ast *param = $3;
         arg_list.push_back(param);
@@ -807,7 +805,7 @@ parameter:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($1!=NULL, "arith_expression cannot be null", get_line_number());
+        CHECK_INVARIANT($1!=NULL, "arith_expression cannot be null");
         Ast * arith_ast = $1;
         $$ = arith_ast;
     }
@@ -911,7 +909,7 @@ arith_expression:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT(($1!=NULL), "Func call cannot be null", get_line_number());
+        CHECK_INVARIANT(($1!=NULL), "Func call cannot be null");
         Ast *func_ast = $1;
         $$ = func_ast;
     }

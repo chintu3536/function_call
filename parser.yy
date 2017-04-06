@@ -112,14 +112,12 @@ declaration_list:
 procedure_declaration_list:
     procedure_declaration
     {
-        Procedure * proc = $1;
-        program_object.add_procedure(proc, get_line_number());
+
     }
 |
     procedure_declaration_list procedure_declaration
     {
-        Procedure * proc = $2;
-        program_object.add_procedure(proc, get_line_number());
+
     }
 ;
 
@@ -136,9 +134,10 @@ procedure_declaration:
         CHECK_INVARIANT(type = "void" || type = "int" || type = "float", "Unknown type in procedure_declaration");
 
         Data_Type dt;
-        if (type == "void")
+        string t = $1;
+        if (t == "void")
             dt = void_data_type;
-        else if (type == "int")
+        else if (t == "int")
             dt = int_data_type;
         else
             dt = double_data_type;
@@ -146,7 +145,32 @@ procedure_declaration:
         program_object.add_procedure(proc, get_line_number());
 
         list<pair<Data_Type, string> > arg_list = *$4;
+
+        if(arg_list.size() >= 2)
+        {
+            for(list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it++)
+            {
+                for(list<pair<Data_Type, string> >::iterator it1 = ++it, it--; it1 != arg_list.end(); it1++)
+                {
+                    CHECK_INVARIANT(it1->second != it->second, "Identical names of formal parameters");
+                }
+            }
+        }
+
+        pair<Data_Type, string> p = new pair<Data_Type, string>(dt, t);
+        CHECK_INVARIANT(arg_list.find(p) == arg_list.end(), "Function name used in formal parameter list");
+
         proc->set_argument_list(arg_list);
+
+        Symbol_Table * loc_tab = new Symbol_Table();
+        for (list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+            Symbol_Table_Entry * sym_tab_entry = new Symbol_Table_Entry(it->second, it->first, get_line_number());
+            loc_tab->push_symbol(sym_tab_entry);
+        }
+
+        proc->set_local_list(arg_list);
+
         $$ = proc;
     }
     }
@@ -176,21 +200,11 @@ type:
     }
 
 argument_list:
-    //Empty argument list
+    // Empty argument list
     if (NOT_ONLY_PARSE)
     {
         list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
         $$ = arg_list;
-    }
-|
-    argument
-    {
-    if (NOT_ONLY_PARSE)
-    {
-        list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
-        arg_list->push_back(*$1);
-        $$ = arg_list;
-    }
     }
 |
     argument ',' argument_list
@@ -206,8 +220,26 @@ argument_list:
 
 argument:
     INTEGER NAME
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        Data_Type dt = int_data_type;
+        string name = *$2;
+        pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, name);
+        $$ = p;
+    }
+    }
 |
     FLOAT NAME
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        Data_Type dt = double_data_type;
+        string name = *$2;
+        pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, name);
+        $$ = p;
+    }
+    }
 ;
 
 procedure_definition:
@@ -222,6 +254,12 @@ procedure_definition:
 
         CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
             "Procedure name cannot be same as global variable", get_line_number());
+
+        current_procedure = get_procedure(proc_name);
+
+        list<pair<Data_Type, string> > * arg_list = $3;
+        CHECK_INVARIANT(current_procedure.same_arguments(*arg_list), 
+            "Formal Parameters of procedure definition and declaration do not match");
     }
     }
 
@@ -229,19 +267,11 @@ procedure_definition:
     {
     if (NOT_ONLY_PARSE)
     {
-
         CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
-
-        Symbol_Table * local_table = $6;
-
-        if (local_table == NULL)
-            local_table = new Symbol_Table();
-
-        current_procedure->set_local_list(*local_table);
     }
     }
 
-    statement_list '}'
+    statement_list return_stmt '}'
     {
     if (NOT_ONLY_PARSE)
     {
@@ -290,7 +320,6 @@ variable_declaration_list:
 
         for(vector<Symbol_Table_Entry * >::iterator it = decl_entry_list->begin(); it != decl_entry_list->end(); ++it)
         {
-
             string decl_name = (*it) -> get_variable_name();
             CHECK_INPUT((program_object.variable_proc_name_check(decl_name) == false),
                 "Procedure name cannot be same as the variable name", get_line_number());
@@ -298,6 +327,9 @@ variable_declaration_list:
             {
                 CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
                     "Variable name cannot be same as procedure name", get_line_number());
+                CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(), 
+                    "Variable already declared in procedure");
+                current_procedure->add_symbol_entry(*it);
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -333,6 +365,9 @@ variable_declaration_list:
             {
                 CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
                     "Variable name cannot be same as procedure name", get_line_number());
+                CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(), 
+                    "Variable already declared in procedure");
+                current_procedure->add_symbol_entry(*it);
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -619,8 +654,6 @@ function_call:
 parameter_list:
 
 |
-    parameter
-|
     parameter_list ',' parameter
 ;
 
@@ -723,7 +756,7 @@ arith_expression:
 |
     function_call
     {
-        
+
     }
 ;
 

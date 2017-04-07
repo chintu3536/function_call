@@ -312,8 +312,9 @@ public:
 class Return_Ast: public Ast
 {
 	Ast *ret;
+	string fname;
 public:
-	Return_Ast(Ast *ret, int line);
+	Return_Ast(Ast *ret,  string fname, int line);
 	~Return_Ast();
 
 	void set_data_type(Data_Type dt);

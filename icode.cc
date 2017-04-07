@@ -626,6 +626,184 @@ set<var> Label_IC_Stmt::get_global_list()
 	return s;
 }
 
+Return_IC_Stmt::Return_IC_Stmt(Tgt_Op op, Ics_Opd *opd1, bool boolean, bool tp, Stmt_Type st)
+{
+	CHECK_INVARIANT((machine_desc_object.spim_instruction_table[op] != NULL),
+			"Instruction description in spim table cannot be null");
+	op_desc = *(machine_desc_object.spim_instruction_table[op]);
+	opd = opd1;
+	type = st;
+	is_store = tp;
+	is_float = boolean;
+}
+
+Return_IC_Stmt::~Return_IC_Stmt()
+{
+
+}
+
+Ics_Opd * Return_IC_Stmt::get_opd()
+{
+	return opd;
+}
+
+void Return_IC_Stmt::set_opd(Ics_Opd * io)
+{
+	opd = io;
+}
+
+void Return_IC_Stmt::print_icode(ostream & file_buffer)
+{
+
+}
+
+void Return_IC_Stmt::print_assembly(ostream & file_buffer)
+{
+	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
+	string op_name = op_desc.get_mnemonic();
+
+	if(is_store)
+	{
+		if(is_float)
+		{
+			file_buffer<<"\t"<<op_name<<" $f0, "<<opd->print_asm_opd(file_buffer)<<"\n";
+		}
+		else{
+			file_buffer<<"\t"<<op_name<<" $v1, "<<opd->print_asm_opd(file_buffer)<<"\n";
+		}
+	}
+	else
+	{
+		if(is_float)
+		{
+			file_buffer<<"\t"<<op_name<<" "<<opd->print_asm_opd(file_buffer)<<", $f0\n";
+		}
+		else
+		{
+			file_buffer<<"\t"<<op_name<<" "<<opd->print_asm_opd(file_buffer)<<", $v1\n";
+		}
+	}
+}
+
+Function_param_IC_Stmt::Function_param_IC_Stmt(Tgt_Op op, Ics_opd *opd1, int ofset, Stmt_Type st)
+{
+	CHECK_INVARIANT((machine_desc_object.spim_instruction_table[op] != NULL),
+			"Instruction description in spim table cannot be null");
+	op_desc = *(machine_desc_object.spim_instruction_table[op]);
+	opd = opd1;
+	type = st;
+	offset = ofset;
+}
+
+Function_param_IC_Stmt::~Function_param_IC_Stmt()
+{
+
+}
+
+Ics_Opd * Function_param_IC_Stmt::get_opd()
+{
+	return opd;
+}
+
+void Function_param_IC_Stmt::set_opd(Ics_Opd * io)
+{
+	opd=io;
+}
+
+void Function_param_IC_Stmt::print_icode(ostream & file_buffer)
+{
+
+}
+
+void Function_param_IC_Stmt::print_assembly(ostream & file_buffer)
+{
+	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
+	string op_name = op_desc.get_mnemonic();
+
+	file_buffer<<"\t"<<op_name<<" "<<opd->print_asm_opd(file_buffer)<<", "<<offset<<"($sp)\n";
+}
+
+Sp_update_IC_Stmt::Sp_update_IC_Stmt(Tgt_Op op, int ofset, Stmt_Type st)
+{
+	CHECK_INVARIANT((machine_desc_object.spim_instruction_table[op] != NULL),
+			"Instruction description in spim table cannot be null");
+	op_desc = *(machine_desc_object.spim_instruction_table[op]);
+	type = st;
+	offset = ofset;
+}
+
+Sp_update_IC_Stmt::~Sp_update_IC_Stmt()
+{
+
+}
+
+void Sp_update_IC_Stmt::print_icode(ostream & file_buffer)
+{
+
+}
+
+void Sp_update_IC_Stmt::print_assembly(ostream & file_buffer)
+{
+	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
+	string op_name = op_desc.get_mnemonic();
+
+	file_buffer<<"\t"<<op_name<<" $sp"<<", "<<"$sp"<<offset<<"\n";
+}
+
+Print_IC_Stmt::Print_IC_Stmt(Tgt_Op op, Ics_Opd *opd1, Data_Type d_type1, string name, Stmt_Type st)
+{
+	CHECK_INVARIANT((machine_desc_object.spim_instruction_table[op] != NULL),
+			"Instruction description in spim table cannot be null");
+	op_desc = *(machine_desc_object.spim_instruction_table[op]);
+	type = st;
+	opd = opd1;
+	d_type = d_type1;
+	string_name = name;
+}
+
+Print_IC_Stmt::~Print_IC_Stmt()
+{
+
+}
+
+void Print_IC_Stmt::print_assembly(ostream & file_buffer)
+{
+	file_buffer<<"addi $sp, $sp, -4\n";
+	file_buffer<<"sw $v0, 0($sp)\n";
+	file_buffer<<"addi $sp, $sp, -4\n";
+	file_buffer<<"sw $a0, 0($sp)\n";
+	file_buffer<<"addi $sp, $sp, -8\n";
+	file_buffer<<"s.d $f12, 0($sp)\n";
+
+
+	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
+	string op_name = op_desc.get_mnemonic();
+
+	if(d_type == double_data_type)
+	{
+		file_buffer<<"\t"<<op_name<<" $f12, "<<opd->print_asm_opd(file_buffer)<<"\n";
+		file_buffer<<"li $v0 3\n";
+	}
+	if(d_type == int_data_type)
+	{
+		file_buffer<<"\t"<<op_name<<" $a0, "<<opd->print_asm_opd(file_buffer)<<"\n";
+		file_buffer<<"li $v0 1\n";
+	}
+	if(d_type == string_data_type)
+	{
+		file_buffer<<"la $a0, "<<string_name<<"\n";
+		file_buffer<<"li $v0 4\n";
+	}
+
+	file_buffer<<"syscall\n";
+	file_buffer<<"l.d $f12, 0($sp)\n";
+	file_buffer<<"addi $sp, $sp, 8\n";
+	file_buffer<<"lw $a0, 0($sp)\n";
+	file_buffer<<"addi $sp, $sp, 4\n";
+	file_buffer<<"lw $v0, 0($sp)\n";
+	file_buffer<<"addi $sp, $sp, 4\n";
+}
+
 /******************************* Class Code_For_Ast ****************************/
 
 Code_For_Ast::Code_For_Ast()

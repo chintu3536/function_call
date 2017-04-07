@@ -104,3 +104,7 @@ bool Procedure::variable_in_symbol_list_check(string variable)
 	return local_symbol_table.variable_in_symbol_list_check(variable);
 }
 
+int Procedure::local_var_size()
+{
+	return local_symbol_table.get_size();
+}

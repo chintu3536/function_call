@@ -149,11 +149,25 @@ procedure_declaration:
         string proc_name = *$2;
         CHECK_INVARIANT(!program_object.variable_proc_name_check(proc_name),
                                      "Overloading of the procedure is not allowed");
+<<<<<<< HEAD
         Data_Type dt;
         // cout<<"Printing String : "<<*$1<<endl;;
         // string t = *$1;
         // cout<<t<<endl;
         dt = void_data_type;
+=======
+        string type = *$1;
+        CHECK_INVARIANT(type == "void" || type == "int" || type == "float", "Unknown type in procedure_declaration");
+
+        Data_Type dt;
+        string t = *$1;
+        if (t == "void")
+            dt = void_data_type;
+        else if (t == "int")
+            dt = int_data_type;
+        else
+            dt = double_data_type;
+>>>>>>> d975edc2bd41a7b5d2cfeb2897d3fd87781e8597
         Procedure * proc = new Procedure(dt, proc_name, get_line_number());
         program_object.add_procedure(proc, get_line_number());
 
@@ -170,11 +184,16 @@ procedure_declaration:
             }
         }
 
+<<<<<<< HEAD
         pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, proc_name);
         for (auto it = arg_list.begin(); it != arg_list.end(); it ++)
         {
         	CHECK_INVARIANT(*it != *p, "Function name used in formal parameter list");
         }
+=======
+        pair<Data_Type, string>* p = new pair<Data_Type, string>(dt, t);
+        CHECK_INVARIANT(arg_list.find(*p) == arg_list.end(), "Function name used in formal parameter list");
+>>>>>>> d975edc2bd41a7b5d2cfeb2897d3fd87781e8597
 
         proc->set_argument_list(arg_list);
         cout<<"Procedure name : "<<proc->get_proc_name()<<endl;
@@ -881,7 +900,7 @@ return_stmt:
     {
     if(NOT_ONLY_PARSE)
     {
-        Return_Ast *ret_ast = new Return_Ast(NULL, get_line_number());
+        Return_Ast *ret_ast = new Return_Ast(NULL, current_procedure->get_proc_name(), get_line_number());
         Data_Type dt = void_data_type;
         ret_ast->set_data_type(dt);
         $$ = ret_ast;
@@ -894,7 +913,7 @@ return_stmt:
     {
         CHECK_INVARIANT($2!=NULL, "return argument cannot be null ");
         Ast *ret = $2;
-        Return_Ast * ret_ast = new Return_Ast(ret, get_line_number());
+        Return_Ast * ret_ast = new Return_Ast(ret, current_procedure->get_proc_name(), get_line_number());
         ret_ast->set_data_type(ret->get_data_type());
         $$ = ret_ast;
     }

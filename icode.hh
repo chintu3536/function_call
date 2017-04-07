@@ -362,7 +362,6 @@ public:
 class Label_IC_Stmt: public Icode_Stmt
 {
 	string label;
-
 public:
 	Label_IC_Stmt(Tgt_Op inst_op, string label, Stmt_Type st);
 	~Label_IC_Stmt(){}
@@ -379,7 +378,76 @@ public:
 	void print_assembly(ostream & file_buffer);
 };
 
+class Return_IC_Stmt: public Icode_Stmt
+{
+	Ics_Opd *opd;
+	bool is_float;
+	bool is_store;
+public:
+	Return_IC_Stmt(Tgt_Op op, Ics_Opd *opd, bool is_float, bool tp, Stmt_Type st);
+	~Return_IC_Stmt();
 
+	Ics_Opd * get_opd();
+	void set_opd(Ics_Opd * io);
+
+	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
+	vector<var> get_names_right(){vector<var> names(0); return names;};
+	set<var> get_global_list(){set<var> v;return v};
+
+	void print_icode(ostream &file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Function_param_IC_Stmt: public Icode_Stmt
+{
+	Ics_Opd *opd;
+	int offset;
+public:
+	Function_param_IC_Stmt(Tgt_Op op, Ics_Opd *opd, int offset, Stmt_Type st);
+	~Function_param_IC_Stmt();
+
+	Ics_Opd * get_opd();
+	void set_opd(Ics_opd *io);
+
+	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
+	vector<var> get_names_right(){vector<var> names(0); return names;};
+	set<var> get_global_list(){set<var> v;return v};
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Sp_update_IC_Stmt: public Icode_Stmt
+{
+	int offset;
+public:
+	Sp_update_IC_Stmt(Tgt_Op op, int offset, Stmt_Type st);
+	~Sp_update_IC_Stmt();
+
+	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
+	vector<var> get_names_right(){vector<var> names(0); return names;};
+	set<var> get_global_list(){set<var> v;return v};
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Print_IC_Stmt:public Icode_Stmt
+{
+	Ics_Opd *opd;
+	Data_Type d_type;
+	string string_name;
+public:
+	Print_IC_Stmt(Tgt_Op op, Ics_Opd *opd, Data_Type  d_type, string name, Stmt_Type st);
+	~Print_IC_Stmt();
+
+	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
+	vector<var> get_names_right(){vector<var> names(0); return names;};
+	set<var> get_global_list(){set<var> v;return v};
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
 
 //////////////////////// Intermediate code for Ast statements ////////////////////////
 

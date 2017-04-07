@@ -37,6 +37,7 @@ public:
 	bool same_arguments(ARG_L def_arg_list);
 	bool argument_type_check(list<Data_Type> type_list);
 	void add_symbol_entry(Symbol_Table_Entry &ste);
+	int local_var_size();
 
 	void print(ostream & file_buffer);
 	void print_sym(ostream & file_buffer);

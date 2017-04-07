@@ -65,7 +65,7 @@ bool Procedure::same_arguments(ARG_L def_arg_list)
 		return false;
 	}
 	ARG_L::iterator it1, it2;
-	for(it1=argument_list.begin(), it2=def_arg_list.begin(); it1!=argument_list;it1++, it2++)
+	for(it1=argument_list.begin(), it2=def_arg_list.begin(); it1!=argument_list.end();it1++, it2++)
 	{
 		if(*(it1) != *(it2))
 		{

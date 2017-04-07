@@ -20,6 +20,7 @@
     Return_Ast *ret_ast;
     Print_Ast *p_ast;
     Func_Call_Ast *f_ast;
+    list<Ast *> *ast_list;
 };
 
 %left OR
@@ -41,6 +42,8 @@
 %token IF ELSE 
 %token ASSIGN
 %token RETURN
+%token PRINT
+%token <string_value> STRING
 
 %type <symbol_table> optional_variable_declaration_list
 %type <symbol_table> variable_declaration_list
@@ -61,8 +64,11 @@
 %type <ast> constant
 
 %type <proc> procedure_declaration
-%type <string_value> func_type
 %type <arg_list> argument_list
+%type <ast_list> parameter_list
+%type <arg_list> optional_argument_list
+%type <ast_list> optional_parameter_list
+%type <ast> parameter
 %type <arg> argument
 %type <f_ast> function_call
 %type <p_ast> print_statement
@@ -135,7 +141,7 @@ procedure_declaration_list:
 ;
 
 procedure_declaration:
-    func_type NAME '(' argument_list ')' ';'
+    VOID NAME '(' optional_argument_list ')' ';'
     {
     if (NOT_ONLY_PARSE)
     {
@@ -143,17 +149,11 @@ procedure_declaration:
         string proc_name = *$2;
         CHECK_INVARIANT(!program_object.variable_proc_name_check(proc_name),
                                      "Overloading of the procedure is not allowed");
-        string type = *$1;
-        CHECK_INVARIANT(type = "void" || type = "int" || type = "float", "Unknown type in procedure_declaration");
-
         Data_Type dt;
-        string t = $1;
-        if (t == "void")
-            dt = void_data_type;
-        else if (t == "int")
-            dt = int_data_type;
-        else
-            dt = double_data_type;
+        // cout<<"Printing String : "<<*$1<<endl;;
+        // string t = *$1;
+        // cout<<t<<endl;
+        dt = void_data_type;
         Procedure * proc = new Procedure(dt, proc_name, get_line_number());
         program_object.add_procedure(proc, get_line_number());
 
@@ -163,15 +163,127 @@ procedure_declaration:
         {
             for(list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it++)
             {
-                for(list<pair<Data_Type, string> >::iterator it1 = ++it, it--; it1 != arg_list.end(); it1++)
+                for(list<pair<Data_Type, string> >::iterator it1 = next(it, 1); it1 != arg_list.end(); it1++)
                 {
                     CHECK_INVARIANT(it1->second != it->second, "Identical names of formal parameters");
                 }
             }
         }
 
-        pair<Data_Type, string> p = new pair<Data_Type, string>(dt, t);
-        CHECK_INVARIANT(arg_list.find(p) == arg_list.end(), "Function name used in formal parameter list");
+        pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, proc_name);
+        for (auto it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+        	CHECK_INVARIANT(*it != *p, "Function name used in formal parameter list");
+        }
+
+        proc->set_argument_list(arg_list);
+        cout<<"Procedure name : "<<proc->get_proc_name()<<endl;
+        for (auto it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+        	cout<<it->second<<endl;;
+        }
+        Symbol_Table * loc_tab = new Symbol_Table();
+        for (list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+            Symbol_Table_Entry * sym_tab_entry = new Symbol_Table_Entry(it->second, it->first, get_line_number());
+            loc_tab->push_symbol(sym_tab_entry);
+        }
+
+        proc->set_local_list(*loc_tab);
+
+        $$ = proc;
+    }
+    }
+|	
+	INTEGER NAME '(' optional_argument_list ')' ';'
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
+        string proc_name = *$2;
+        CHECK_INVARIANT(!program_object.variable_proc_name_check(proc_name),
+                                     "Overloading of the procedure is not allowed");
+        Data_Type dt;
+        // cout<<"Printing String : "<<*$1<<endl;;
+        // string t = *$1;
+        // cout<<t<<endl;
+        dt = int_data_type;
+        Procedure * proc = new Procedure(dt, proc_name, get_line_number());
+        program_object.add_procedure(proc, get_line_number());
+
+        list<pair<Data_Type, string> > arg_list = *$4;
+
+        if(arg_list.size() >= 2)
+        {
+            for(list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it++)
+            {
+                for(list<pair<Data_Type, string> >::iterator it1 = next(it, 1); it1 != arg_list.end(); it1++)
+                {
+                    CHECK_INVARIANT(it1->second != it->second, "Identical names of formal parameters");
+                }
+            }
+        }
+
+        pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, proc_name);
+        for (auto it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+        	CHECK_INVARIANT(*it != *p, "Function name used in formal parameter list");
+        }
+
+        proc->set_argument_list(arg_list);
+        cout<<"Procedure name : "<<proc->get_proc_name()<<endl;
+        for (auto it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+        	cout<<it->second<<endl;;
+        }
+
+        Symbol_Table * loc_tab = new Symbol_Table();
+        for (list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+            Symbol_Table_Entry * sym_tab_entry = new Symbol_Table_Entry(it->second, it->first, get_line_number());
+            loc_tab->push_symbol(sym_tab_entry);
+        }
+
+        proc->set_local_list(*loc_tab);
+
+        $$ = proc;
+    }
+    }
+|
+	FLOAT NAME '(' optional_argument_list ')' ';'
+    {
+    if (NOT_ONLY_PARSE)
+    {
+        CHECK_INVARIANT(($2 != NULL), "Procedure name cannot be null");
+        string proc_name = *$2;
+        CHECK_INVARIANT(!program_object.variable_proc_name_check(proc_name),
+                                     "Overloading of the procedure is not allowed");
+        Data_Type dt;
+        // cout<<"Printing String : "<<*$1<<endl;;
+        // string t = *$1;
+        // cout<<t<<endl;
+        dt = double_data_type;
+        Procedure * proc = new Procedure(dt, proc_name, get_line_number());
+        program_object.add_procedure(proc, get_line_number());
+
+        list<pair<Data_Type, string> > arg_list = *$4;
+
+        if(arg_list.size() >= 2)
+        {
+            for(list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it++)
+            {
+                for(list<pair<Data_Type, string> >::iterator it1 = next(it, 1); it1 != arg_list.end(); it1++)
+                {
+                    CHECK_INVARIANT(it1->second != it->second, "Identical names of formal parameters");
+                }
+            }
+        }
+
+        pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, proc_name);
+        for (auto it = arg_list.begin(); it != arg_list.end(); it ++)
+        {
+        	CHECK_INVARIANT(*it != *p, "Function name used in formal parameter list");
+        }
 
         proc->set_argument_list(arg_list);
 
@@ -182,55 +294,82 @@ procedure_declaration:
             loc_tab->push_symbol(sym_tab_entry);
         }
 
-        proc->set_local_list(arg_list);
+        proc->set_local_list(*loc_tab);
 
         $$ = proc;
     }
     }
 ;
 
-func_type:
-    VOID
-    {
-    if (NOT_ONLY_PARSE)
-    {
-        $$ = "void";
-    }
-    }
+// func_type:
+//     VOID
+//     {
+//     if (NOT_ONLY_PARSE)
+//     {
+//     	cout<<"Printing String func void\n";
+//     	string * s = new string("void");
+//     	// cout<<*s<<endl;
+//         $$ = s;
+//     }
+//     }
+// |
+//     INTEGER
+//     {
+//     if (NOT_ONLY_PARSE)
+//     {
+//     	cout<<"Printing String func int\n";
+//        string * s = new string("int");
+//         $$ = s;
+//     }
+// 	}
+// |
+//     FLOAT
+//     {
+//     if (NOT_ONLY_PARSE)
+//     {
+//     	cout<<"Printing String func float\n";
+//         string * s = new string("float");
+//         $$ = s;
+//     }
+//     }
+// ;
+
+optional_argument_list:
+
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
+		$$ = arg_list;
+	}
+	}
 |
-    INTEGER
-    {
-    if (NOT_ONLY_PARSE)
-    {
-        $$ = "int";
-    }
-}
-|
-    FLOAT
-    {
-    if (NOT_ONLY_PARSE)
-    {
-        $$ = "float";
-    }
-    }
+	argument_list
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		$$ = $1;
+	}
+	}
 ;
 
 argument_list:
-    // Empty argument list
+    argument
     {
     if (NOT_ONLY_PARSE)
     {
         list<pair<Data_Type, string> > * arg_list = new list<pair<Data_Type, string> >();
+        arg_list->push_back(*$1);
         $$ = arg_list;
     }
     }
 |
-    argument ',' argument_list
+    argument_list ',' argument
     {
     if (NOT_ONLY_PARSE)
     {
-        list<pair<Data_Type, string> > * arg_list = $3;
-        arg_list->push_back(*$1);
+        list<pair<Data_Type, string> > * arg_list = $1;
+        arg_list->push_back(*$3);
         $$ = arg_list;
     }
     }
@@ -241,6 +380,7 @@ argument:
     {
     if (NOT_ONLY_PARSE)
     {
+    	cout<<"Argument int \n";
         Data_Type dt = int_data_type;
         string name = *$2;
         pair<Data_Type, string> * p = new pair<Data_Type, string>(dt, name);
@@ -265,7 +405,7 @@ procedure_definition_list:
     {
     if (NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($1 != NULL, "procedure_definition can not be null");
+
     }
     }
 |
@@ -273,13 +413,13 @@ procedure_definition_list:
     {
     if (NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($2 != NULL, "procedure_definition can not be null");
+
     }
     }
 ;
 
 procedure_definition:
-    NAME '(' argument_list ')' 
+    NAME '(' optional_argument_list ')' 
     {
     if (NOT_ONLY_PARSE)
     {
@@ -291,10 +431,10 @@ procedure_definition:
         CHECK_INPUT ((program_object.variable_in_symbol_list_check(proc_name) == false),
             "Procedure name cannot be same as global variable", get_line_number());
 
-        current_procedure = get_procedure(proc_name);
+        current_procedure = program_object.get_procedure(proc_name);
 
         list<pair<Data_Type, string> > * arg_list = $3;
-        CHECK_INVARIANT(current_procedure.same_arguments(*arg_list), 
+        CHECK_INVARIANT(current_procedure->same_arguments(*arg_list), 
             "Formal Parameters of procedure definition and declaration do not match");
     }
     }
@@ -311,10 +451,12 @@ procedure_definition:
     {
     if (NOT_ONLY_PARSE)
     {
-        Sequence_Ast* seq = $8;
+        Sequence_Ast* seq = $9;
+        Ast * ret = $10;
+        CHECK_INVARIANT(current_procedure->get_return_type() == ret->get_data_type(), "Return type not matched");
+        seq->ast_push_back($10);
 
         CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
-        CHECK_INVARIANT((seq != NULL), "statement list cannot be null");
 
         current_procedure->set_sequence_ast(*seq);
     }
@@ -363,9 +505,10 @@ variable_declaration_list:
             {
                 CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
                     "Variable name cannot be same as procedure name", get_line_number());
-                CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(), 
+                cout<<"curr_proc : "<<current_procedure->get_proc_name()<<endl;
+                CHECK_INVARIANT(!current_procedure->variable_in_symbol_list_check(decl_name), 
                     "Variable already declared in procedure");
-                current_procedure->add_symbol_entry(*it);
+                current_procedure->add_symbol_entry(**it);
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -401,9 +544,9 @@ variable_declaration_list:
             {
                 CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
                     "Variable name cannot be same as procedure name", get_line_number());
-                CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(), 
+                CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(decl_name), 
                     "Variable already declared in procedure");
-                current_procedure->add_symbol_entry(*it);
+                current_procedure->add_symbol_entry(**it);
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -621,6 +764,16 @@ matched_stmt:
         $$ = func_ast;
     }
     }
+|
+	print_statement
+	{
+	if(NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT($1!=NULL, "Print statement cannot be null");
+        Ast *print_ast = $1;
+        $$ = print_ast;
+	}
+	}
 ;   
 
 unmatched_stmt:
@@ -710,9 +863,12 @@ print_statement:
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($3!=NULL, "string cannot be null");
+        CHECK_INVARIANT($3 != NULL, "string cannot be null");
         string s = *$3;
-        Print_Ast *p_ast = new Print_Ast(s, get_line_number());
+        string assembly_string = program_object.get_new_string();
+        program_object.add_assembly_string(assembly_string, s);
+        String_Ast *s_ast = new String_Ast(s, assembly_string, get_line_number());
+        Print_Ast *p_ast = new Print_Ast(s_ast, get_line_number());
         Data_Type dt = void_data_type;
         p_ast->set_data_type(dt);
         $$ = p_ast;
@@ -746,7 +902,7 @@ return_stmt:
 ;
 
 function_call:
-    NAME '(' parameter_list ')' ';'
+    NAME '(' optional_parameter_list ')' ';'
     {
     if (NOT_ONLY_PARSE)
     {
@@ -760,10 +916,10 @@ function_call:
                 CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Function has not been declared");
             }
         }
-        list<Ast * > arg_list = $3;
+        list<Ast * > arg_list = *$3;
         Procedure *proc= program_object.get_procedure(name);
         list<Data_Type> type_list;
-        list<Ast *>::iterator =it;
+        list<Ast *>::iterator it;
         for(it=arg_list.begin();it!=arg_list.end();it++)
         {
             type_list.push_back((*it)->get_data_type());
@@ -778,26 +934,46 @@ function_call:
     }
 ;
 
-parameter_list:
+optional_parameter_list:
     {
     if(NOT_ONLY_PARSE)
     {
-        list<Ast *> arg_list;
-        $$ = arg_list;
+        list<Ast *> *param_list = new list<Ast *>();
+        $$ = param_list;
     }
     }
 |
-    parameter_list ',' parameter
+    parameter_list
     {
     if(NOT_ONLY_PARSE)
     {
-        CHECK_INVARIANT($1!=NULL && $3!=NULL, "parameter cannot be null");
-        list<Ast *> arg_list = $1;
-        Ast *param = $3;
-        arg_list.push_back(param);
-        $$ = arg_list;
+        CHECK_INVARIANT($1!=NULL, "parameter list cannot be null");
+        $$ = $1;
     }
     }
+;
+
+parameter_list:
+	parameter
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		CHECK_INVARIANT($1!=NULL, "parameter cannot be null");
+		list<Ast *> *param_list = new list<Ast *>();
+		param_list->push_back($1);
+		$$ = param_list;
+	}
+	}
+|
+	parameter_list ',' parameter
+	{
+	if (NOT_ONLY_PARSE)
+	{
+		list<Ast *> *param_list = $1;
+		param_list->push_back($3);
+		$$ = param_list;
+	}
+	}
 ;
 
 parameter:

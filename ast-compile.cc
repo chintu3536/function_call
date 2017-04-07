@@ -349,7 +349,7 @@ Code_For_Ast & Boolean_Expr_Ast::compile()
 	Icode_Stmt * bool_stmt = new Compute_IC_Stmt(op, lhs_opd, rhs_opd, out_res, st);
 
 	lhs_reg->reset_use_for_expr_result();
-	rhs_reg->reset_use_for_expr_result();	~Func_Call_Ast();
+	rhs_reg->reset_use_for_expr_result();
 
 	out_reg->reset_use_for_expr_result();
 
@@ -834,6 +834,7 @@ Code_For_Ast & Func_Call_Ast::compile()
 
 Code_For_Ast & Sequence_Ast::compile()
 {	
+	cout<<"size of seq ast : "<<statement_list.size()<<endl;
 	for(list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++)
 	{
 		CHECK_INVARIANT(((*it) != NULL), "Ast cannot be null in Sequence_Ast");

@@ -11,7 +11,6 @@
 
 using namespace std;
 
-
 class Program;
 
 extern Program program_object;
@@ -20,6 +19,8 @@ class Program
 {
 	Symbol_Table global_symbol_table;
 	map<string, Procedure *> procedure_map;
+	int string_number;
+	map<string, string> assembly_strings;
 
 public:
 	Program();
@@ -37,8 +38,12 @@ public:
 	void print();
 
 	bool variable_proc_name_check(string symbol);
+	bool variable_in_proc_map_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_check();
+
+	string get_new_string();
+	void add_assembly_string(string asmb_str, string content);
 
 	// compile
 	void compile();

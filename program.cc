@@ -15,9 +15,11 @@ using namespace std;
 #include "procedure.hh"
 #include "program.hh"
 
+Program program_object;
+
 Program::Program()
 {
-
+	string_number = 0;
 }
 
 Program::~Program()
@@ -51,7 +53,7 @@ Data_Type Program::get_return_type(string function_name)
 	return (procedure_map[function_name])->get_return_type();
 }
 
-Procedure * get_procedure(string name)
+Procedure * Program::get_procedure(string name)
 {
 	return procedure_map[name];
 }
@@ -69,7 +71,11 @@ void Program::print()
 bool Program::variable_proc_name_check(string symbol)
 {
 	return procedure_map.find(symbol)!=procedure_map.end();
+}
 
+bool Program::variable_in_proc_map_check(string symbol)
+{
+	return procedure_map.find(symbol)!=procedure_map.end();
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
@@ -77,7 +83,16 @@ bool Program::variable_in_symbol_list_check(string variable)
 	return global_symbol_table.variable_in_symbol_list_check(variable);
 }
 
-void global_list_in_proc_check()
+void Program::global_list_in_proc_check()
 {
 	//TODO:
+}
+
+string Program::get_new_string()
+{
+	return "string"+to_string(string_number++);
+}
+void Program::add_assembly_string(string asmb_str, string content)
+{
+	assembly_strings[asmb_str] = content;
 }

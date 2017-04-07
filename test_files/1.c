@@ -1,16 +1,21 @@
 void main();
 int one(int a);
+int two();
 main()
 {
 	int a;
-	print(1+a);
-	print(1);
-	a = one(1);
 	return;
 }
 
-one(int b)
+one(int a)
 {
+	int b;
 	b = 10;
-	return b ;
+	return b;
+}
+
+two()
+{
+	int a;
+	return a;
 }

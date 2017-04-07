@@ -293,14 +293,16 @@ public:
 class String_Ast:public Ast
 {
 	string str;
+	string assembly_str;
 
 public:
-	String_Ast(string s, int line);
+	String_Ast(string s, string asmb_str, int line);
 	~String_Ast(){}
 
 	Data_Type get_data_type();
 	void set_data_type(Data_Type dt);
 	string get_string();
+	string get_assembly_string();
 
 	void print(ostream & file_buffer);
 

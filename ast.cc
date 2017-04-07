@@ -629,6 +629,11 @@ Data_Type Return_Ast::get_data_type()
 	return node_data_type;
 }
 
+void Return_Ast::print(ostream & file_buffer)
+{
+
+}
+
 Print_Ast::Print_Ast(Ast * temp_ast, int line)
 {
 	p_ast = temp_ast;
@@ -643,7 +648,7 @@ Print_Ast::~Print_Ast()
 	delete p_ast;
 }
 
-Print_Ast::check_ast()
+bool Print_Ast::check_ast()
 {
 	return (p_ast != NULL);
 }
@@ -663,12 +668,13 @@ void Print_Ast::print(ostream & file_buffer)
 	
 }
 
-String_Ast::String_Ast(string s, int line)
+String_Ast::String_Ast(string s, string asmb_str, int line)
 {
+	assembly_str = asmb_str;
 	str = s;
 	lineno = line;
 	ast_num_child = unary_arity;
-	set_data_type(void_data_type);
+	set_data_type(string_data_type);
 }
 
 void String_Ast::set_data_type(Data_Type dt)

@@ -169,6 +169,14 @@ float3 ({digit}+)[eE][\-+]?{digit}+
 	return matched()[0];
 }
 
+(\"(\\.|[^"])*\") {
+	cout << "Found an string whose lexeme is '" << matched() << "'\n";
+	ParserBase::STYPE__ *val = getSval();	
+  	val->string_value = new std::string(matched());
+	store_token_name("STRING");
+	return Parser::STRING;
+}
+
 {brackets} {
 	cout << "Found a bracket whose lexeme is '" << matched() << "'\n";
 	store_token_name("META CHAR");

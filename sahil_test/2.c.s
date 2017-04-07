@@ -1,6 +1,6 @@
 
 	.data
-string0:	 .asciiz 	"asl"
+string0:	 .asciiz 	"abc"
 
 	.text 			# The .text assembler directive indicates
 	.globl main		# The following is the code (as oppose to data)

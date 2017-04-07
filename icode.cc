@@ -67,8 +67,8 @@ void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer)
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer) 
 {
 	Table_Scope symbol_scope = symbol_entry->get_symbol_scope();
-
-	CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global)), 
+	cout<<symbol_scope<<" "<<symbol_entry->get_variable_name()<<" "<<symbol_entry->get_lineno()<<endl;
+	CHECK_INVARIANT(((symbol_scope == local) || (symbol_scope == global) || (symbol_scope == formal)), 
 			"Wrong scope value");
 
 	if (symbol_scope == local)
@@ -568,6 +568,7 @@ set<var>Control_Flow_IC_Stmt::get_global_list(){
 }
 
 Label_IC_Stmt::Label_IC_Stmt(Tgt_Op op, string l, Stmt_Type st){
+	cout<<op<<endl;
 	CHECK_INVARIANT((machine_desc_object.spim_instruction_table[op] != NULL),
 			"Instruction description in spim table cannot be null");
 	op_desc = *(machine_desc_object.spim_instruction_table[op]);
@@ -776,16 +777,17 @@ void Print_IC_Stmt::print_assembly(ostream & file_buffer)
 	file_buffer<<"s.d $f12, 0($sp)\n";
 
 
-	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 	string op_name = op_desc.get_mnemonic();
 
 	if(d_type == double_data_type)
 	{
+		CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 		file_buffer<<"\t"<<op_name<<" $f12, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
 		file_buffer<<"li $v0 3\n";
 	}
 	if(d_type == int_data_type)
 	{
+		CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 		file_buffer<<"\t"<<op_name<<" $a0, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
 		file_buffer<<"li $v0 1\n";
 	}
@@ -803,6 +805,12 @@ void Print_IC_Stmt::print_assembly(ostream & file_buffer)
 	file_buffer<<"lw $v0, 0($sp)\n";
 	file_buffer<<"addi $sp, $sp, 4\n";
 }
+
+void Print_IC_Stmt::print_icode(ostream & file_buffer)
+{
+
+}
+
 
 /******************************* Class Code_For_Ast ****************************/
 

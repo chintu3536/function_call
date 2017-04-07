@@ -30,7 +30,7 @@ void Procedure::print_assembly(ostream & file_buffer)
 {
 	//TODO: New label
 	file_buffer<<"\t.text\n";
-	file_buffer<<"\t.global "<<name<<"\n";
+	file_buffer<<"\t.globl "<<name<<"\n";
 	file_buffer<<name<<":\n\n";
 	print_prologue(file_buffer);
 	sequence_ast->print_assembly(file_buffer);

@@ -97,6 +97,7 @@ declaration_list:
     if (NOT_ONLY_PARSE)
     {
         Symbol_Table * global_table = new Symbol_Table();
+
         program_object.set_global_table(*global_table);
     }
     }
@@ -110,6 +111,17 @@ declaration_list:
 
         CHECK_INVARIANT((global_table != NULL), "Global declarations cannot be null");
 
+        list<Symbol_Table_Entry *> & glob_tab = global_table->get_table();
+        for(auto it = glob_tab.begin(); it != glob_tab.end(); it++)
+        {
+        	(*it)->set_symbol_scope(global);
+        }
+
+        global_table = new Symbol_Table();
+        for(auto it = glob_tab.begin(); it != glob_tab.end(); it++)
+        {
+        	global_table->push_symbol(*it);
+        }
         program_object.set_global_table(*global_table);
     }
     }
@@ -123,6 +135,17 @@ declaration_list:
 
         CHECK_INVARIANT((global_table != NULL), "Global declarations cannot be null");
 
+        list<Symbol_Table_Entry *> & glob_tab = global_table->get_table();
+        for(auto it = glob_tab.begin(); it != glob_tab.end(); it++)
+        {
+        	(*it)->set_symbol_scope(global);
+        }
+
+        global_table = new Symbol_Table();
+        for(auto it = glob_tab.begin(); it != glob_tab.end(); it++)
+        {
+        	global_table->push_symbol(*it);
+        }
         program_object.set_global_table(*global_table);
     }
     }
@@ -433,8 +456,14 @@ procedure_definition:
 
         current_procedure = program_object.get_procedure(proc_name);
 
-        list<pair<Data_Type, string> > * arg_list = $3;
-        CHECK_INVARIANT(current_procedure->same_arguments(*arg_list), 
+        list<pair<Data_Type, string> > arg_list = *$3;
+        for (auto it = arg_list.begin(); it != arg_list.end(); it++)
+        {
+        	string name = it->second;
+        	Symbol_Table_Entry & sym = current_procedure->get_symbol_table_entry(name);
+        	sym.set_symbol_scope(formal);
+        }
+        CHECK_INVARIANT(current_procedure->same_arguments(arg_list), 
             "Formal Parameters of procedure definition and declaration do not match");
     }
     }
@@ -508,12 +537,14 @@ variable_declaration_list:
                 cout<<"curr_proc : "<<current_procedure->get_proc_name()<<endl;
                 CHECK_INVARIANT(!current_procedure->variable_in_symbol_list_check(decl_name), 
                     "Variable already declared in procedure");
+                (**it).set_symbol_scope(local);
                 current_procedure->add_symbol_entry(**it);
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
                     "Variable is declared twice", get_line_number());
 
+            // (*it)->set_symbol_scope(global);
             decl_list->push_symbol(*it);
         }
         $$ = decl_list;
@@ -546,12 +577,13 @@ variable_declaration_list:
                     "Variable name cannot be same as procedure name", get_line_number());
                 CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(decl_name), 
                     "Variable already declared in procedure");
+                (**it).set_symbol_scope(local);
                 current_procedure->add_symbol_entry(**it);
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
                     "Variable is declared twice", get_line_number());
-
+            // (*it)->set_symbol_scope(global);
             decl_list->push_symbol(*it);
         }
         $$ = decl_list;

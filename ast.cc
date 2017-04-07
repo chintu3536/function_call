@@ -663,7 +663,9 @@ bool Print_Ast::check_ast()
 
 Data_Type Print_Ast::get_data_type()
 {
+	cout<<node_data_type<<" node_data\n";
 	return node_data_type;
+
 }
 
 void Print_Ast::set_data_type(Data_Type dt)
@@ -683,6 +685,7 @@ String_Ast::String_Ast(string s, string asmb_str, int line)
 	lineno = line;
 	ast_num_child = unary_arity;
 	set_data_type(string_data_type);
+	cout<<"string data : "<<get_data_type();
 }
 
 void String_Ast::set_data_type(Data_Type dt)

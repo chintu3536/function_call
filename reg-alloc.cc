@@ -158,7 +158,7 @@ void Machine_Description::initialize_register_table()
 
 //define addi below
 void Machine_Description::initialize_instruction_table()
-{
+{cout<<"Iteartbjnkm\n";
 	spim_instruction_table[store] = new Instruction_Descriptor(store, "store", "sw", "", i_r_op_o1, a_op_o1_r);
 	spim_instruction_table[load] = new Instruction_Descriptor(load, "load", "lw", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[la] = new Instruction_Descriptor(la, "loadAdd", "la", "", i_r_op_o1, a_op_r_o1);

@@ -866,7 +866,8 @@ Code_For_Ast & Return_Ast::compile()
 
 Code_For_Ast & Print_Ast::compile()
 {
-	if(get_data_type()==int_data_type)
+	cout<<get_data_type()<<" sdzxotdfc\n";
+	if(p_ast->get_data_type()==int_data_type)
 	{
 		Code_For_Ast & ret_stmt =  p_ast->compile();
 		Register_Descriptor *ret_reg = ret_stmt.get_reg();
@@ -888,7 +889,7 @@ Code_For_Ast & Print_Ast::compile()
 		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
 		return *print_code;
 	}
-	if(get_data_type()==double_data_type)
+	if(p_ast->get_data_type()==double_data_type)
 	{
 		Code_For_Ast & ret_stmt =  p_ast->compile();
 		Register_Descriptor *ret_reg = ret_stmt.get_reg();
@@ -910,8 +911,9 @@ Code_For_Ast & Print_Ast::compile()
 		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
 		return *print_code;
 	}
-	if(get_data_type()==string_data_type)
+	if(p_ast->get_data_type()==string_data_type)
 	{
+		cout<<"Coming string ......\n";
 		Tgt_Op op;
 		op = la;
 		Data_Type dt = string_data_type;
@@ -925,7 +927,7 @@ Code_For_Ast & Print_Ast::compile()
 		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
 		return *print_code;
 	}	
-
+	cout<<"why not coming ....\n";
 }
 
 Code_For_Ast & String_Ast::compile()
@@ -1007,12 +1009,17 @@ Code_For_Ast & Func_Call_Ast::compile()
 Code_For_Ast & Sequence_Ast::compile()
 {	
 	cout<<"size of seq ast : "<<statement_list.size()<<endl;
+	int count = 0;
 	for(list<Ast*>::iterator it = statement_list.begin(); it != statement_list.end(); it++)
 	{
+		cout<<count<<" count"<<endl;
 		CHECK_INVARIANT(((*it) != NULL), "Ast cannot be null in Sequence_Ast");
+		cout<<".1\n";
 		Code_For_Ast & seq_stmt = (*it) -> compile();
+		cout<<".2\n";
 		list<Icode_Stmt *> seq_list = seq_stmt.get_icode_list(); 
 		sa_icode_list.insert(sa_icode_list.end(), seq_list.begin(), seq_list.end());
+		count++;
 	}	
 
 	Code_For_Ast *seq_code=new Code_For_Ast(sa_icode_list, NULL);

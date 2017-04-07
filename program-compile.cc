@@ -17,11 +17,14 @@ using namespace std;
 
 void Program::compile()
 {
-	cout<<"Compilation Error !!!!\n";
+	// cout<<"Compilation Error !!!!\n";
+	machine_desc_object.initialize_instruction_table();
+	machine_desc_object.initialize_register_table();
 	for(auto it = procedure_map.begin(); it != procedure_map.end(); it++)
 	{
 		(it->second)->compile();
 	}
+	print_assembly();
 }
 
 void Program::print_assembly()
@@ -54,4 +57,9 @@ void Program::print_assembly()
 		assembly_file_buffer<<it->first<<":\t.asciiz\t"<<it->second<<endl;
 	}
 	assembly_file_buffer<<endl;
+
+	for(auto it = procedure_map.begin(); it != procedure_map.end(); it++)
+	{
+		(it->second)->print_assembly(assembly_file_buffer);
+	}
 }

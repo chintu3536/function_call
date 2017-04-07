@@ -27,12 +27,12 @@ Register_Descriptor * Ics_Opd::get_reg()
 
 var Ics_Opd::get_name()
 {
-	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Ics_opd get_name() not defined")
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Ics_Opd get_name() not defined")
 }
 
 bool Ics_Opd::is_global()
 {
-	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Ics_opd get_global() not defined")
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Ics_Opd get_global() not defined")
 }
 
 /****************************** Class Mem_Addr_Opd *****************************/
@@ -666,26 +666,26 @@ void Return_IC_Stmt::print_assembly(ostream & file_buffer)
 	{
 		if(is_float)
 		{
-			file_buffer<<"\t"<<op_name<<" $f0, "<<opd->print_asm_opd(file_buffer)<<"\n";
+			file_buffer<<"\t"<<op_name<<" $f0, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
 		}
 		else{
-			file_buffer<<"\t"<<op_name<<" $v1, "<<opd->print_asm_opd(file_buffer)<<"\n";
+			file_buffer<<"\t"<<op_name<<" $v1, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
 		}
 	}
 	else
 	{
 		if(is_float)
 		{
-			file_buffer<<"\t"<<op_name<<" "<<opd->print_asm_opd(file_buffer)<<", $f0\n";
+			file_buffer<<"\t"<<op_name<<" ";opd->print_asm_opd(file_buffer);file_buffer<<", $f0\n";
 		}
 		else
 		{
-			file_buffer<<"\t"<<op_name<<" "<<opd->print_asm_opd(file_buffer)<<", $v1\n";
+			file_buffer<<"\t"<<op_name<<" ";opd->print_asm_opd(file_buffer);file_buffer<<", $v1\n";
 		}
 	}
 }
 
-Function_param_IC_Stmt::Function_param_IC_Stmt(Tgt_Op op, Ics_opd *opd1, int ofset, Stmt_Type st)
+Function_param_IC_Stmt::Function_param_IC_Stmt(Tgt_Op op, Ics_Opd *opd1, int ofset, Stmt_Type st)
 {
 	CHECK_INVARIANT((machine_desc_object.spim_instruction_table[op] != NULL),
 			"Instruction description in spim table cannot be null");
@@ -720,7 +720,7 @@ void Function_param_IC_Stmt::print_assembly(ostream & file_buffer)
 	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 	string op_name = op_desc.get_mnemonic();
 
-	file_buffer<<"\t"<<op_name<<" "<<opd->print_asm_opd(file_buffer)<<", "<<offset<<"($sp)\n";
+	file_buffer<<"\t"<<op_name<<" ";opd->print_asm_opd(file_buffer);file_buffer<<", "<<offset<<"($sp)\n";
 }
 
 Sp_update_IC_Stmt::Sp_update_IC_Stmt(Tgt_Op op, int ofset, Stmt_Type st)
@@ -744,7 +744,7 @@ void Sp_update_IC_Stmt::print_icode(ostream & file_buffer)
 
 void Sp_update_IC_Stmt::print_assembly(ostream & file_buffer)
 {
-	CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
+	// CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 	string op_name = op_desc.get_mnemonic();
 
 	file_buffer<<"\t"<<op_name<<" $sp"<<", "<<"$sp"<<offset<<"\n";
@@ -781,12 +781,12 @@ void Print_IC_Stmt::print_assembly(ostream & file_buffer)
 
 	if(d_type == double_data_type)
 	{
-		file_buffer<<"\t"<<op_name<<" $f12, "<<opd->print_asm_opd(file_buffer)<<"\n";
+		file_buffer<<"\t"<<op_name<<" $f12, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
 		file_buffer<<"li $v0 3\n";
 	}
 	if(d_type == int_data_type)
 	{
-		file_buffer<<"\t"<<op_name<<" $a0, "<<opd->print_asm_opd(file_buffer)<<"\n";
+		file_buffer<<"\t"<<op_name<<" $a0, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
 		file_buffer<<"li $v0 1\n";
 	}
 	if(d_type == string_data_type)

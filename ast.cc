@@ -598,9 +598,10 @@ void Conditional_Operator_Ast::print(ostream & file_buffer)
 	file_buffer<<")";
 }
 
-Return_Ast::Return_Ast(Ast* ret_ast, int line)
+Return_Ast::Return_Ast(Ast* ret_ast, string s, int line)
 {
 	ret = ret_ast;
+	fname = s;
 	if(ret_ast==NULL){
 		ast_num_child = unary_arity;
 		Data_Type dt= void_data_type;

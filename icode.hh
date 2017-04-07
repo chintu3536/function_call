@@ -392,7 +392,7 @@ public:
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
 	vector<var> get_names_right(){vector<var> names(0); return names;};
-	set<var> get_global_list(){set<var> v;return v};
+	set<var> get_global_list(){set<var> v;return v;};
 
 	void print_icode(ostream &file_buffer);
 	void print_assembly(ostream & file_buffer);
@@ -407,11 +407,11 @@ public:
 	~Function_param_IC_Stmt();
 
 	Ics_Opd * get_opd();
-	void set_opd(Ics_opd *io);
+	void set_opd(Ics_Opd *io);
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
 	vector<var> get_names_right(){vector<var> names(0); return names;};
-	set<var> get_global_list(){set<var> v;return v};
+	set<var> get_global_list(){set<var> v;return v;};
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
@@ -426,7 +426,7 @@ public:
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
 	vector<var> get_names_right(){vector<var> names(0); return names;};
-	set<var> get_global_list(){set<var> v;return v};
+	set<var> get_global_list(){set<var> v;return v;}
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);
@@ -443,7 +443,7 @@ public:
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
 	vector<var> get_names_right(){vector<var> names(0); return names;};
-	set<var> get_global_list(){set<var> v;return v};
+	set<var> get_global_list(){set<var> v;return v;}
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);

@@ -815,10 +815,117 @@ Code_For_Ast & UMinus_Ast::compile()
 Code_For_Ast & Return_Ast::compile()
 {
 	//TODO:
+	Tgt_Op op=j;
+	string label = "epilouge_"+fname;
+	Stmt_Type st = direct_jump;
+	Icode_Stmt *ret_icode = new Label_IC_Stmt(op, label, st);
+	list<Icode_Stmt *> ret_list;
+
+	Data_Type dt = get_data_type();
+	if(dt == void_data_type){	
+		ret_list.push_back(ret_icode);
+		Code_For_Ast *ret_code = new Code_For_Ast(ret_list, NULL);
+		return *ret_code;
+	}
+	else{
+		Code_For_Ast &ret_stmt = ret->compile();
+		Register_Descriptor *ret_reg = ret_stmt.get_reg();
+		ret_reg->set_use_for_expr_result();
+
+		Tgt_Op op;
+		bool is_float; // TODO: 
+
+		if(ret->get_data_type()==int_data_type)
+		{
+			op = mov;
+			is_float = false;
+		}
+		else
+		{
+			op = mov_d;
+			dt = double_data_type;
+			is_float = true;
+		}
+
+		out_reg->set_use_for_expr_result();
+
+		Ics_Opd *ret_opd = new Register_Addr_Opd(ret_reg);
+		Stmt_Type st = simple;
+		Icode_Stmt *mv_icode = new Return_IC_Stmt(op, ret_opd, is_float, true, st);
+
+		ret_reg->reset_use_for_expr_result();
+
+		ret_list.insert(ret_list.end(), ret_stmt.get_icode_list().begin(), ret_stmt.get_icode_list.end());
+		ret_list.push_back(mv_icode);
+		ret_list.push_back(ret_icode);
+
+		Code_For_Ast *ret_code = new Code_For_Ast(ret_list, NULL);
+		return *ret_code;
+	}
+
 }
 
 Code_For_Ast & Print_Ast::compile()
 {
+	if(get_data_type()==int_data_type)
+	{
+		Code_For_Ast & ret_stmt =  p_ast->compile();
+		Register_Descriptor *ret_reg = ret_stmt.get_reg();
+		ret_reg->set_use_for_expr_result();
+
+		Tgt_Op op;
+		op = mov;
+		Data_Type dt = int_data_type;
+		Ics_Opd *opd = new Register_Addr_Opd(ret_reg);
+		Stmt_Type st = simple;
+		Icode_Stmt *print_icode = new Print_IC_Stmt(op, opd, dt, NULL, st);
+
+		ret_reg->reset_use_for_expr_result();
+
+		list<Icode_Stmt *> icode_list;
+		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list.begin(), ret_stmt.get_icode_list.end());
+		icode_list.push_back(print_icode);
+
+		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
+		return *print_code;
+	}
+	if(get_data_type()==double_data_type)
+	{
+		Code_For_Ast & ret_stmt =  p_ast->compile();
+		Register_Descriptor *ret_reg = ret_stmt.get_reg();
+		ret_reg->set_use_for_expr_result();
+
+		Tgt_Op op;
+		op = mov_d;
+		Data_Type dt = double_data_type;
+		Ics_Opd *opd = new Register_Addr_Opd(ret_reg);
+		Stmt_Type st = simple;
+		Icode_Stmt *print_icode = new Print_IC_Stmt(op, opd, dt, NULL, st);
+
+		ret_reg->reset_use_for_expr_result();
+
+		list<Icode_Stmt *> icode_list;
+		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list.begin(), ret_stmt.get_icode_list.end());
+		icode_list.push_back(print_icode);
+
+		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
+		return *print_code;
+	}
+	if(get_data_type()==string_data_type)
+	{
+		Tgt_Op op;
+		op = la;
+		Data_Type dt = string_data_type;
+		Stmt_Type st = simple;
+		Icode_Stmt *print_icode = new Print_IC_Stmt(op, NULL, dt, get_assembly_string(), st);
+
+
+		list<Icode_Stmt *> icode_list;
+		icode_list.push_back(print_icode);
+
+		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
+		return *print_code;
+	}	
 
 }
 
@@ -829,7 +936,71 @@ Code_For_Ast & String_Ast::compile()
 
 Code_For_Ast & Func_Call_Ast::compile()
 {
-	
+	Tgt_Op op = jal;
+	string label = fname;
+	Stmt_Type st = direct_jump;
+	Icode_Stmt *fcall_icode = new Label_IC_Stmt(op, label, st);
+	list<Icode_Stmt *> fcall_list;
+
+	list<Ast *>::reverse_iterator it;
+	int offset=0;
+	for(it=paramlist.rbegin(); it!=paramlist.rend();it++)
+	{
+		Code_For_Ast & param_code = (*it)->compile();
+		Register_Descriptor *param_reg = param_code.get_reg();
+		param_reg->set_use_for_expr_result();
+		Data_Type dt = (*it)->get_data_type();
+		Tgt_Op temp_op;
+		if(dt == int_data_type)
+		{
+			temp_op = store;
+			offset=offset-4;
+		}
+		else
+		{
+			temp_op = store_d;
+			offset=offset-8;
+		}
+		Ics_Opd *param_opd = new Register_Addr_Opd(param_reg);
+		Stmt_Type st = simple;
+		Icode_Stmt *arg_icode = new Function_param_IC_Stmt(temp_op, param_opd, offset, st);
+		param_reg->reset_use_for_expr_result();
+		fcall_list.insert(fcall_list.end(), param_code.get_icode_list.begin(), param_code.get_icode_list.end());
+		fcall_list.push_back(arg_icode);
+
+	}
+	Tgt_Op s_op  = sub;
+	st = simple;
+	Icode_Stmt *sp_dec = new Sp_update_IC_Stmt(s_op, -offset, st);
+	fcall_list.push_back(sp_dec);
+	fcall_list.push_back(fcall_icode);
+
+	s_op = add;
+	Icode_Stmt *sp_inc = new Sp_update_IC_Stmt(s_op, offset, st);
+	fcall_list.push_back(sp_inc);
+	Register_Descriptor *out_reg;
+
+	if((get_data_type()==int_data_type))
+	{
+		out_reg = machine_desc_object.get_new_register<gp_data>();
+		Tgt_Op op = mov;
+		out_reg = set_use_for_expr_result();
+		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, out_reg, false, false, st);
+		fcall_list.push_back(mv_icode);
+	}
+	if(get_data_type()==double_data_type)
+	{
+		out_reg = machine_desc_object.get_new_register<float_reg>();
+		Tgt_Op op = mov_d;
+		out_reg = set_use_for_expr_result();
+		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, out_reg, true, false, st);
+		fcall_list.push_back(mv_icode);
+	}
+
+	out_reg->reset_use_for_expr_result();
+
+	Code_For_Ast * fcall_code = new Code_For_Ast(fcall_list, out_reg);
+	return *fcall_code;
 }
 
 Code_For_Ast & Sequence_Ast::compile()

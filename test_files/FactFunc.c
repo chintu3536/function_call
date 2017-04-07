@@ -1,7 +1,7 @@
-void nonrecurfn(int n);
+void nonrecurfn(int n, int fact);
 void recurfn(int number);
 int recurfactorial(int n);
-int nonrecurfactorial(int n);
+float nonrecurfactorial(int n);
 void main(); 
 
 main()
@@ -11,10 +11,10 @@ main()
   fact = 1;
   number = 5; 
   
-  print("Printing functionality to be supported to.\n");
-  print(fact);
+  // print("Printing functionality to be supported to.\n");
+  // print(fact);
 
-  nonrecurfn(number); 
+  nonrecurfn(number, fact); 
   recurfn(number);
   return;
 }
@@ -52,12 +52,12 @@ nonrecurfactorial(int n)
     result = result * c;
     c = c+1;
  }
-  return result;
+  return 1.0;
 }
 
-nonrecurfn(int n)
+nonrecurfn(int n, int fact)
 {
-  int f;
+  float f;
   if (n < 0){ 
    }
   else

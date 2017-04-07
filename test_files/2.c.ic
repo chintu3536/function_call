@@ -1,15 +1,18 @@
-  Procedure: a
-  Intermediate Code Statements
-	iLoad:    	v0 <- 1
-	store:    	b <- v0
-	iLoad:    	v0 <- 1
-	move:    	v1 <- v0
-	return
-  Procedure: b
-  Intermediate Code Statements
-	iLoad:    	v0 <- 1
-	move:    	v1 <- v0
-	return
   Procedure: main
   Intermediate Code Statements
+	addi:    	sp <- sp , -4
+	store:    	sp <- v0
+	addi:    	sp <- sp , -4
+	store:    	sp <- a0
+	addi:    	sp <- sp , -8
+	store.d:    	sp <- f12
+	loadAdd:    	a0 <- string0
+	iLoad:    	v0 <- 4
+	syscall 
+	load.d:    	f12 <- sp
+	addi:    	sp <- sp , 8
+	load:    	a0 <- sp
+	addi:    	sp <- sp , 4
+	load:    	v0 <- sp
+	addi:    	sp <- sp , 4
 	return

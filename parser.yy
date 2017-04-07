@@ -144,10 +144,10 @@ procedure_declaration:
         CHECK_INVARIANT(!program_object.variable_proc_name_check(proc_name),
                                      "Overloading of the procedure is not allowed");
         string type = *$1;
-        CHECK_INVARIANT(type = "void" || type = "int" || type = "float", "Unknown type in procedure_declaration");
+        CHECK_INVARIANT(type == "void" || type == "int" || type == "float", "Unknown type in procedure_declaration");
 
         Data_Type dt;
-        string t = $1;
+        string t = *$1;
         if (t == "void")
             dt = void_data_type;
         else if (t == "int")
@@ -163,15 +163,15 @@ procedure_declaration:
         {
             for(list<pair<Data_Type, string> >::iterator it = arg_list.begin(); it != arg_list.end(); it++)
             {
-                for(list<pair<Data_Type, string> >::iterator it1 = ++it, it--; it1 != arg_list.end(); it1++)
+                for(list<pair<Data_Type, string> >::iterator it1 = next(it, 1); it1 != arg_list.end(); it1++)
                 {
                     CHECK_INVARIANT(it1->second != it->second, "Identical names of formal parameters");
                 }
             }
         }
 
-        pair<Data_Type, string> p = new pair<Data_Type, string>(dt, t);
-        CHECK_INVARIANT(arg_list.find(p) == arg_list.end(), "Function name used in formal parameter list");
+        pair<Data_Type, string>* p = new pair<Data_Type, string>(dt, t);
+        CHECK_INVARIANT(arg_list.find(*p) == arg_list.end(), "Function name used in formal parameter list");
 
         proc->set_argument_list(arg_list);
 
@@ -725,7 +725,7 @@ return_stmt:
     {
     if(NOT_ONLY_PARSE)
     {
-        Return_Ast *ret_ast = new Return_Ast(NULL, get_line_number());
+        Return_Ast *ret_ast = new Return_Ast(NULL, current_procedure->get_proc_name(), get_line_number());
         Data_Type dt = void_data_type;
         ret_ast->set_data_type(dt);
         $$ = ret_ast;
@@ -738,7 +738,7 @@ return_stmt:
     {
         CHECK_INVARIANT($2!=NULL, "return argument cannot be null ");
         Ast *ret = $2;
-        Return_Ast * ret_ast = new Return_Ast(ret, get_line_number());
+        Return_Ast * ret_ast = new Return_Ast(ret, current_procedure->get_proc_name(), get_line_number());
         ret_ast->set_data_type(ret->get_data_type());
         $$ = ret_ast;
     }

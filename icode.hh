@@ -387,8 +387,8 @@ public:
 	Return_IC_Stmt(Tgt_Op op, Ics_Opd *opd, bool is_float, bool tp, Stmt_Type st);
 	~Return_IC_Stmt();
 
-	Ics_Opd * get_opd();
-	void set_opd(Ics_Opd * io);
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd * io);
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
 	vector<var> get_names_right(){vector<var> names(0); return names;};
@@ -406,8 +406,8 @@ public:
 	Function_param_IC_Stmt(Tgt_Op op, Ics_Opd *opd, int offset, Stmt_Type st);
 	~Function_param_IC_Stmt();
 
-	Ics_Opd * get_opd();
-	void set_opd(Ics_Opd *io);
+	Ics_Opd * get_opd1();
+	void set_opd1(Ics_Opd *io);
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};
 	vector<var> get_names_right(){vector<var> names(0); return names;};
@@ -438,7 +438,7 @@ class Print_IC_Stmt:public Icode_Stmt
 	Data_Type d_type;
 	string string_name;
 public:
-	Print_IC_Stmt(Tgt_Op op, Ics_Opd *opd, Data_Type  d_type, string name, Stmt_Type st);
+	Print_IC_Stmt(Tgt_Op op, Ics_Opd *opd, Data_Type d_type, string name, Stmt_Type st);
 	~Print_IC_Stmt();
 
 	var get_names_left(){var v;v.name = "#"; v.is_reg=false;return v;};

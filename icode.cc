@@ -642,12 +642,12 @@ Return_IC_Stmt::~Return_IC_Stmt()
 
 }
 
-Ics_Opd * Return_IC_Stmt::get_opd()
+Ics_Opd * Return_IC_Stmt::get_opd1()
 {
 	return opd;
 }
 
-void Return_IC_Stmt::set_opd(Ics_Opd * io)
+void Return_IC_Stmt::set_opd1(Ics_Opd * io)
 {
 	opd = io;
 }
@@ -700,12 +700,12 @@ Function_param_IC_Stmt::~Function_param_IC_Stmt()
 
 }
 
-Ics_Opd * Function_param_IC_Stmt::get_opd()
+Ics_Opd * Function_param_IC_Stmt::get_opd1()
 {
 	return opd;
 }
 
-void Function_param_IC_Stmt::set_opd(Ics_Opd * io)
+void Function_param_IC_Stmt::set_opd1(Ics_Opd * io)
 {
 	opd=io;
 }

@@ -847,7 +847,6 @@ Code_For_Ast & Return_Ast::compile()
 			is_float = true;
 		}
 
-		out_reg->set_use_for_expr_result();
 
 		Ics_Opd *ret_opd = new Register_Addr_Opd(ret_reg);
 		Stmt_Type st = simple;
@@ -855,7 +854,7 @@ Code_For_Ast & Return_Ast::compile()
 
 		ret_reg->reset_use_for_expr_result();
 
-		ret_list.insert(ret_list.end(), ret_stmt.get_icode_list().begin(), ret_stmt.get_icode_list.end());
+		ret_list.insert(ret_list.end(), ret_stmt.get_icode_list().begin(), ret_stmt.get_icode_list().end());
 		ret_list.push_back(mv_icode);
 		ret_list.push_back(ret_icode);
 
@@ -883,7 +882,7 @@ Code_For_Ast & Print_Ast::compile()
 		ret_reg->reset_use_for_expr_result();
 
 		list<Icode_Stmt *> icode_list;
-		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list.begin(), ret_stmt.get_icode_list.end());
+		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list().begin(), ret_stmt.get_icode_list().end());
 		icode_list.push_back(print_icode);
 
 		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
@@ -905,7 +904,7 @@ Code_For_Ast & Print_Ast::compile()
 		ret_reg->reset_use_for_expr_result();
 
 		list<Icode_Stmt *> icode_list;
-		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list.begin(), ret_stmt.get_icode_list.end());
+		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list().begin(), ret_stmt.get_icode_list().end());
 		icode_list.push_back(print_icode);
 
 		Code_For_Ast *print_code = new Code_For_Ast(icode_list, NULL);
@@ -917,7 +916,7 @@ Code_For_Ast & Print_Ast::compile()
 		op = la;
 		Data_Type dt = string_data_type;
 		Stmt_Type st = simple;
-		Icode_Stmt *print_icode = new Print_IC_Stmt(op, NULL, dt, get_assembly_string(), st);
+		Icode_Stmt *print_icode = new Print_IC_Stmt(op, NULL, dt, p_ast->get_assembly_string(), st);
 
 
 		list<Icode_Stmt *> icode_list;
@@ -965,7 +964,7 @@ Code_For_Ast & Func_Call_Ast::compile()
 		Stmt_Type st = simple;
 		Icode_Stmt *arg_icode = new Function_param_IC_Stmt(temp_op, param_opd, offset, st);
 		param_reg->reset_use_for_expr_result();
-		fcall_list.insert(fcall_list.end(), param_code.get_icode_list.begin(), param_code.get_icode_list.end());
+		fcall_list.insert(fcall_list.end(), param_code.get_icode_list().begin(), param_code.get_icode_list().end());
 		fcall_list.push_back(arg_icode);
 
 	}
@@ -984,16 +983,18 @@ Code_For_Ast & Func_Call_Ast::compile()
 	{
 		out_reg = machine_desc_object.get_new_register<gp_data>();
 		Tgt_Op op = mov;
-		out_reg = set_use_for_expr_result();
-		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, out_reg, false, false, st);
+		out_reg->set_use_for_expr_result();
+		Ics_Opd *reg_opd = new Register_Addr_Opd(out_reg);
+		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, reg_opd, false, false, st);
 		fcall_list.push_back(mv_icode);
 	}
 	if(get_data_type()==double_data_type)
 	{
 		out_reg = machine_desc_object.get_new_register<float_reg>();
 		Tgt_Op op = mov_d;
-		out_reg = set_use_for_expr_result();
-		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, out_reg, true, false, st);
+		out_reg->set_use_for_expr_result();
+		Ics_Opd *reg_opd = new Register_Addr_Opd(out_reg);
+		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, reg_opd, true, false, st);
 		fcall_list.push_back(mv_icode);
 	}
 

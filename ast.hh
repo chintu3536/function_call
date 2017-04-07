@@ -56,6 +56,7 @@ public:
 	virtual Code_For_Ast & create_store_stmt(Register_Descriptor * store_register);
 	virtual void print_assembly();
 	virtual void print_icode();
+	virtual string get_assembly_string();
 
 };
 

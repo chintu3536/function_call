@@ -54,6 +54,13 @@ void Ast::set_data_type(Data_Type dt)
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
+string Ast::get_assembly_string()
+{	
+	stringstream msg;
+	msg << "No get_assembly_string() function for " << typeid(*this).name();
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
+}
+
 ////////////////////////////////////////////////////////////////
 
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
@@ -691,6 +698,11 @@ Data_Type String_Ast::get_data_type()
 string String_Ast::get_string()
 {
 	return str;
+}
+
+string String_Ast::get_assembly_string()
+{
+	return assembly_str;
 }
 
 void String_Ast::print(ostream & file_buffer)

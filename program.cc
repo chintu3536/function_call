@@ -90,7 +90,7 @@ void Program::global_list_in_proc_check()
 
 string Program::get_new_string()
 {
-	return "string"+to_string(string_number++);
+	return "__string__"+to_string(string_number++);
 }
 void Program::add_assembly_string(string asmb_str, string content)
 {

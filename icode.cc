@@ -76,6 +76,11 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 		int offset = symbol_entry->get_start_offset();
 		file_buffer << offset << "($fp)";
 	}
+	else if (symbol_scope == formal)
+	{
+		int  offset = -symbol_entry->get_end_offset();
+		file_buffer << offset+8 << "($fp)";
+	}
 	else
 		file_buffer << symbol_entry->get_variable_name();
 }
@@ -597,8 +602,8 @@ void Label_IC_Stmt::print_assembly(ostream & file_buffer){
 
 	Assembly_Format assem_format = op_desc.get_assembly_format();
 
-	if(op_name.compare("j")==0){
-		file_buffer<<"\tj "<<label<<endl;
+	if(op_name.compare("j")==0 || op_name.compare("jal")==0){
+		file_buffer<<"\t"<<op_name<<" "<<label<<endl;
 	}
 	else{
 		file_buffer<<"\n"<<label <<":    	\n";
@@ -748,7 +753,7 @@ void Sp_update_IC_Stmt::print_assembly(ostream & file_buffer)
 	// CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 	string op_name = op_desc.get_mnemonic();
 
-	file_buffer<<"\t"<<op_name<<" $sp"<<", "<<"$sp"<<offset<<"\n";
+	file_buffer<<"\t"<<op_name<<" $sp"<<", "<<"$sp, "<<offset<<"\n";
 }
 
 Print_IC_Stmt::Print_IC_Stmt(Tgt_Op op, Ics_Opd *opd1, Data_Type d_type1, string name, Stmt_Type st)
@@ -769,12 +774,12 @@ Print_IC_Stmt::~Print_IC_Stmt()
 
 void Print_IC_Stmt::print_assembly(ostream & file_buffer)
 {
-	file_buffer<<"addi $sp, $sp, -4\n";
-	file_buffer<<"sw $v0, 0($sp)\n";
-	file_buffer<<"addi $sp, $sp, -4\n";
-	file_buffer<<"sw $a0, 0($sp)\n";
-	file_buffer<<"addi $sp, $sp, -8\n";
-	file_buffer<<"s.d $f12, 0($sp)\n";
+	file_buffer<<"\taddi $sp, $sp, -4\n";
+	file_buffer<<"\tsw $v0, 0($sp)\n";
+	file_buffer<<"\taddi $sp, $sp, -4\n";
+	file_buffer<<"\tsw $a0, 0($sp)\n";
+	file_buffer<<"\taddi $sp, $sp, -8\n";
+	file_buffer<<"\ts.d $f12, 0($sp)\n";
 
 
 	string op_name = op_desc.get_mnemonic();
@@ -783,27 +788,27 @@ void Print_IC_Stmt::print_assembly(ostream & file_buffer)
 	{
 		CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 		file_buffer<<"\t"<<op_name<<" $f12, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
-		file_buffer<<"li $v0 3\n";
+		file_buffer<<"\tli $v0 3\n";
 	}
 	if(d_type == int_data_type)
 	{
 		CHECK_INVARIANT(opd!=NULL, "opd cannot be null for a return ic stmt");
 		file_buffer<<"\t"<<op_name<<" $a0, ";opd->print_asm_opd(file_buffer);file_buffer<<"\n";
-		file_buffer<<"li $v0 1\n";
+		file_buffer<<"\tli $v0 1\n";
 	}
 	if(d_type == string_data_type)
 	{
-		file_buffer<<"la $a0, "<<string_name<<"\n";
-		file_buffer<<"li $v0 4\n";
+		file_buffer<<"\tla $a0, "<<string_name<<"\n";
+		file_buffer<<"\tli $v0 4\n";
 	}
 
-	file_buffer<<"syscall\n";
-	file_buffer<<"l.d $f12, 0($sp)\n";
-	file_buffer<<"addi $sp, $sp, 8\n";
-	file_buffer<<"lw $a0, 0($sp)\n";
-	file_buffer<<"addi $sp, $sp, 4\n";
-	file_buffer<<"lw $v0, 0($sp)\n";
-	file_buffer<<"addi $sp, $sp, 4\n";
+	file_buffer<<"\tsyscall\n";
+	file_buffer<<"\tl.d $f12, 0($sp)\n";
+	file_buffer<<"\taddi $sp, $sp, 8\n";
+	file_buffer<<"\tlw $a0, 0($sp)\n";
+	file_buffer<<"\taddi $sp, $sp, 4\n";
+	file_buffer<<"\tlw $v0, 0($sp)\n";
+	file_buffer<<"\taddi $sp, $sp, 4\n";
 }
 
 void Print_IC_Stmt::print_icode(ostream & file_buffer)

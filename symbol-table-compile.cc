@@ -26,34 +26,46 @@ int Symbol_Table::get_start_offset_of_first_symbol()
 
 int Symbol_Table::get_size()
 {
-	return size_in_bytes;
+	return local_variables_size;
 }
 
 void Symbol_Table::assign_offsets()
 {
 	size_in_bytes = start_offset_of_first_symbol;
 	int offset;
+	local_variables_size = 0;
+
+	int local_var = 0;
+	int formal_var = 0;
 
 	list<Symbol_Table_Entry *>::iterator i;
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
+		if((*i)->get_symbol_scope() == local)
+		{
+			int s = (get_size_of_value_type((*i)->get_data_type()));
+			local_variables_size += s;
+		}
+
 		int size;
-		if (((*i)->get_symbol_scope() == local) || ((*i)->get_symbol_scope() == global))
+		if ((*i)->get_symbol_scope() == local)
 		{
 			size = -(get_size_of_value_type((*i)->get_data_type()));
 
-			(*i)->set_start_offset(size_in_bytes);
+			(*i)->set_end_offset(local_var);
 			size_in_bytes += size;
-			(*i)->set_end_offset(size_in_bytes);
+			local_var+= size;
+			(*i)->set_start_offset(local_var);
 		}
 
 		else if ((*i)->get_symbol_scope() == formal)
 		{
 			size = get_size_of_value_type((*i)->get_data_type());
 
-			(*i)->set_end_offset(size_in_bytes);
+			(*i)->set_end_offset(formal_var);
 			size_in_bytes += size;
-			(*i)->set_start_offset(size_in_bytes);
+			formal_var += size;
+			(*i)->set_start_offset(formal_var);
 		}
 
 		else

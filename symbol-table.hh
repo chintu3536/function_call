@@ -58,6 +58,7 @@ class Symbol_Table
 	// compile
 	int size_in_bytes;		// size of list
 	int start_offset_of_first_symbol;
+	int local_variables_size;
 
 public:
 	Symbol_Table();

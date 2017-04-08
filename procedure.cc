@@ -104,6 +104,21 @@ bool Procedure::variable_in_symbol_list_check(string variable)
 	return local_symbol_table.variable_in_symbol_list_check(variable);
 }
 
+void Procedure::print_symbol_table()
+{
+	local_symbol_table.print(cout);
+}
+
+void Procedure::assign_offsets()
+{
+	local_symbol_table.assign_offsets();
+}
+
+Symbol_Table Procedure::get_symbol_table()
+{
+	return local_symbol_table;
+}
+
 int Procedure::local_var_size()
 {
 	return local_symbol_table.get_size();

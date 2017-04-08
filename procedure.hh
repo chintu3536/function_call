@@ -43,6 +43,9 @@ public:
 	void print_sym(ostream & file_buffer);
 
 	bool variable_in_symbol_list_check(string variable);
+	Symbol_Table get_symbol_table();
+	void print_symbol_table();
+	void assign_offsets();
 
 	void optimise_icode();
 	void print_opt_icode(ostream & file_buffer);

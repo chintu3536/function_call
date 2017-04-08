@@ -465,6 +465,15 @@ procedure_definition:
         }
         CHECK_INVARIANT(current_procedure->same_arguments(arg_list), 
             "Formal Parameters of procedure definition and declaration do not match");
+
+        // Symbol_Table symtab = current_procedure->get_symbol_table();
+        // list<Symbol_Table_Entry *> l = symtab.get_table();
+
+        // cout<<"================= Printing sym_tab of "<<proc_name<<"\n";
+        // for(auto it = l.begin(); it != l.end(); it++)
+        // {
+        //     cout<<(*it)->get_variable_name()<<"\n";
+        // } 
     }
     }
 
@@ -472,7 +481,11 @@ procedure_definition:
     {
     if (NOT_ONLY_PARSE)
     {
+        string proc_name = *$1;
+        current_procedure = program_object.get_procedure(proc_name);
         CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
+        current_procedure->assign_offsets();
+        current_procedure->print_symbol_table();
     }
     }
 
@@ -539,6 +552,7 @@ variable_declaration_list:
                     "Variable already declared in procedure");
                 (**it).set_symbol_scope(local);
                 current_procedure->add_symbol_entry(**it);
+                cout<<current_procedure->get_proc_name()<<" Var : "<<(**it).get_variable_name()<<endl;
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -575,10 +589,11 @@ variable_declaration_list:
             {
                 CHECK_INPUT((current_procedure->get_proc_name() != decl_name),
                     "Variable name cannot be same as procedure name", get_line_number());
-                CHECK_INVARIANT(current_procedure->variable_in_symbol_list_check(decl_name), 
+                CHECK_INVARIANT(!current_procedure->variable_in_symbol_list_check(decl_name), 
                     "Variable already declared in procedure");
                 (**it).set_symbol_scope(local);
                 current_procedure->add_symbol_entry(**it);
+                cout<<current_procedure->get_proc_name()<<" Var : "<<(**it).get_variable_name()<<endl;
             }
 
             CHECK_INPUT((decl_list->variable_in_symbol_list_check(decl_name) == false), 
@@ -787,7 +802,7 @@ matched_stmt:
     }
     }
 |
-    function_call
+    function_call ';'
     {
     if(NOT_ONLY_PARSE)
     {
@@ -913,6 +928,7 @@ return_stmt:
     {
     if(NOT_ONLY_PARSE)
     {
+        cout<<"sfdgbhinjojnewrbefds\n";
         Return_Ast *ret_ast = new Return_Ast(NULL, current_procedure->get_proc_name(), get_line_number());
         Data_Type dt = void_data_type;
         ret_ast->set_data_type(dt);
@@ -934,7 +950,7 @@ return_stmt:
 ;
 
 function_call:
-    NAME '(' optional_parameter_list ')' ';'
+    NAME '(' optional_parameter_list ')'
     {
     if (NOT_ONLY_PARSE)
     {

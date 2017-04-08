@@ -869,7 +869,9 @@ Code_For_Ast & Print_Ast::compile()
 	cout<<get_data_type()<<" sdzxotdfc\n";
 	if(p_ast->get_data_type()==int_data_type)
 	{
+		cout<<"coming int maa ...\n";
 		Code_For_Ast & ret_stmt =  p_ast->compile();
+		cout<<"compiled int maa ...\n";
 		Register_Descriptor *ret_reg = ret_stmt.get_reg();
 		ret_reg->set_use_for_expr_result();
 
@@ -878,10 +880,10 @@ Code_For_Ast & Print_Ast::compile()
 		Data_Type dt = int_data_type;
 		Ics_Opd *opd = new Register_Addr_Opd(ret_reg);
 		Stmt_Type st = simple;
-		Icode_Stmt *print_icode = new Print_IC_Stmt(op, opd, dt, NULL, st);
+		Icode_Stmt *print_icode = new Print_IC_Stmt(op, opd, dt, "", st);
+		cout<<"Print IC done ...\n";
 
 		ret_reg->reset_use_for_expr_result();
-
 		list<Icode_Stmt *> icode_list;
 		icode_list.insert(icode_list.end(), ret_stmt.get_icode_list().begin(), ret_stmt.get_icode_list().end());
 		icode_list.push_back(print_icode);
@@ -900,7 +902,7 @@ Code_For_Ast & Print_Ast::compile()
 		Data_Type dt = double_data_type;
 		Ics_Opd *opd = new Register_Addr_Opd(ret_reg);
 		Stmt_Type st = simple;
-		Icode_Stmt *print_icode = new Print_IC_Stmt(op, opd, dt, NULL, st);
+		Icode_Stmt *print_icode = new Print_IC_Stmt(op, opd, dt, "", st);
 
 		ret_reg->reset_use_for_expr_result();
 
@@ -977,7 +979,7 @@ Code_For_Ast & Func_Call_Ast::compile()
 	fcall_list.push_back(fcall_icode);
 
 	s_op = add;
-	Icode_Stmt *sp_inc = new Sp_update_IC_Stmt(s_op, offset, st);
+	Icode_Stmt *sp_inc = new Sp_update_IC_Stmt(s_op, -offset, st);
 	fcall_list.push_back(sp_inc);
 	Register_Descriptor *out_reg;
 

@@ -1,0 +1,30 @@
+  Procedure: main
+  Intermediate Code Statements
+	iLoad:    	v0 <- 1
+	store:    	y <- v0
+	iLoad:    	v0 <- 2
+	store:    	e <- v0
+	iLoad:    	v0 <- 1
+	store:    	c <- v0
+	load:    	v0 <- y
+	store:    	a <- v0
+	call one
+	move:    	v0 <- v1
+	store:    	x <- v0
+	iLoad:    	v0 <- 2
+	store:    	c <- v0
+	return
+  Procedure: one
+  Intermediate Code Statements
+	load:    	v0 <- a
+	store:    	b <- v0
+	load:    	v0 <- a
+	store:    	a <- v0
+	load:    	v0 <- a
+	move:    	v1 <- v0
+	return
+  Procedure: two
+  Intermediate Code Statements
+	load:    	v0 <- b
+	move:    	v1 <- v0
+	return

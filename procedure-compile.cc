@@ -17,6 +17,7 @@ using namespace std;
 
 void Procedure::compile()
 {
+	cout<<"I am gonna compile "<<name<<endl;
 	sequence_ast->compile();
 }
 
@@ -39,16 +40,13 @@ void Procedure::print_assembly(ostream & file_buffer)
 
 void Procedure::print_prologue(ostream & file_buffer)
 {
-	file_buffer<<"# Prologue begins\n";
-	file_buffer<<"sw $ra, 0($sp)\t";
-	file_buffer<<"#save the return address\n";
-	file_buffer<<"sw $fp, -4($sp)\t";
-	file_buffer<<"#save the frame pointer\n";
-	file_buffer<<"sub $sp, $sp, 8\t";
-	file_buffer<<"#update the frame pointer\n";
-	file_buffer<<"\n";
-	file_buffer<<"sub $sp, $sp "<<local_var_size()+8<<"\t";
-	file_buffer<<"#Make space for the locals\n";
+	file_buffer<<"#Prologue begins\n";
+	file_buffer<<"\tsub $sp, $sp, 4\t# first make space on stack\n";
+	file_buffer<<"\tsw $ra, 0($sp)\n";
+	file_buffer<<"\tsub $sp, $sp, 4\n";
+	file_buffer<<"\tsw $fp, 0($sp)\n";
+	file_buffer<<"\tmove $fp, $sp\n";
+	file_buffer<<"\tsub $sp, $sp, "<<local_var_size()<<"\n";
 	file_buffer<<"#Prologue ends\n";
 }
 
@@ -56,9 +54,15 @@ void Procedure::print_epilogue(ostream & file_buffer)
 {
 	file_buffer<<"# Epilogue begins\n";
 	file_buffer<<"epilouge_"<<name<<":\n";
-	file_buffer<<"add $sp, $sp, "<<local_var_size()+8<<"\n";
-	file_buffer<<"lw $fp, -4($sp)\n";
-	file_buffer<<"lw $ra, 0($sp)\n";
-	file_buffer<<"jr\t$31\t";
-	file_buffer<<"# Jump back to the called procedure\n";
+	file_buffer<<"\tadd $sp, $sp, "<<local_var_size()<<"\n";
+	file_buffer<<"\tlw $fp, 0($sp)\n";
+	file_buffer<<"\tadd $sp, $sp, 4\n";
+	file_buffer<<"\tlw $ra, 0($sp)\n";
+	file_buffer<<"\tadd $sp, $sp, 4\n";
+	if (name != "main")
+		file_buffer<<"\tjr $ra\t#Jump back to the called procedure\n";
+	else
+	{
+		file_buffer<<"\tli $v0, 10\n\tsyscall\n";
+	}
 }

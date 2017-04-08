@@ -178,7 +178,12 @@ template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_asm_opd(ostream & file_buffer) 
 {
 	//TODO
-	file_buffer << num;
+	string type = typeid(this->num).name();
+	size_t found = type.find("int");
+	if( found != std::string::npos)
+		file_buffer<<this->num;
+	else
+		file_buffer<<std::fixed << std::setprecision(2) <<this->num;
 }
 
 template <class DATA_TYPE>

@@ -218,11 +218,21 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 	
 	switch(rel_op){
 		case less_equalto:
-			op = sle;
+			if (get_data_type() == int_data_type){
+				op = sle;
+			}
+			if (get_data_type() == double_data_type){
+				op = sle_d;
+			}
 			break;
 
 		case less_than:
-			op = slt;
+			if (get_data_type() == int_data_type){
+				op = slt;
+			}
+			if (get_data_type() == double_data_type){
+				op = slt_d;
+			}
 			break;
 
 		case greater_than:
@@ -234,7 +244,12 @@ Code_For_Ast & Relational_Expr_Ast::compile()
 			break;
 
 		case equalto:
-			op = seq;
+			if (get_data_type() == int_data_type){
+				op = seq;
+			}
+			if (get_data_type() == double_data_type){
+				op = seq_d;
+			}
 			break;
 
 		case not_equalto:
@@ -832,7 +847,6 @@ Code_For_Ast & Return_Ast::compile()
 		Register_Descriptor *ret_reg = ret_stmt.get_reg();
 		ret_reg->set_use_for_expr_result();
 
-		Tgt_Op op;
 		bool is_float; // TODO: 
 
 		if(ret->get_data_type()==int_data_type)
@@ -840,9 +854,9 @@ Code_For_Ast & Return_Ast::compile()
 			op = mov;
 			is_float = false;
 		}
-		else
+		if(ret->get_data_type()==double_data_type)
 		{
-			op = mov_d;
+			op = move_d;
 			dt = double_data_type;
 			is_float = true;
 		}
@@ -898,7 +912,7 @@ Code_For_Ast & Print_Ast::compile()
 		ret_reg->set_use_for_expr_result();
 
 		Tgt_Op op;
-		op = mov_d;
+		op = move_d;
 		Data_Type dt = double_data_type;
 		Ics_Opd *opd = new Register_Addr_Opd(ret_reg);
 		Stmt_Type st = simple;
@@ -995,7 +1009,7 @@ Code_For_Ast & Func_Call_Ast::compile()
 	if(get_data_type()==double_data_type)
 	{
 		out_reg = machine_desc_object.get_new_register<float_reg>();
-		Tgt_Op op = mov_d;
+		Tgt_Op op = move_d;
 		out_reg->set_use_for_expr_result();
 		Ics_Opd *reg_opd = new Register_Addr_Opd(out_reg);
 		Icode_Stmt * mv_icode = new Return_IC_Stmt(op, reg_opd, true, false, st);
